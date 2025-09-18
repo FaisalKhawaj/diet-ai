@@ -1,4 +1,9 @@
-import { Onboarding1, Onboarding2, Onboarding3 } from "@/assets/images";
+import {
+  Onboarding1,
+  Onboarding2,
+  Onboarding3,
+  Onboarding4,
+} from "@/assets/images";
 import { Spacer } from "@/components/Spacer";
 import { ThemedText } from "@/components/themed-text";
 import { Colors } from "@/constants/theme";
@@ -7,6 +12,7 @@ import { fonts } from "@/hooks/useCacheResources";
 import { responsiveFontSize, responsiveLineHeight } from "@/utils";
 import { Image, StyleSheet } from "react-native";
 
+import { LabelButton } from "@/components/LabelButton";
 import { useRef } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
 import Swiper from "react-native-swiper";
@@ -15,21 +21,22 @@ const slides = [
   {
     title: `AI Powered Recipe Suggestions`,
     description: `Discover recipes tailored to your{"\n"}diet and flavor preferences`,
-    backgroundColor: "#F97316",
     image: Onboarding1,
   },
   {
-    title: "Premium Images",
-    description: "Unlock unlimited images by a world of global creators.",
-    backgroundColor: "#9CA3AF",
+    title: `Scan Food Instantly`,
+    description: `Just scan your meal, and we’ll instantly track calories and macros.`,
     image: Onboarding2,
   },
   {
-    title: "Effortless Image Generation",
-    description:
-      "Simply type a prompt, choose a style, and watch as it brings it to life.",
-    backgroundColor: "#3B82F6",
+    title: `Track Calories & Macros`,
+    description: `Let Diet AI be your smart calorie and macro tracker for better nutrition.`,
     image: Onboarding3,
+  },
+  {
+    title: `Your Personalized Diet Plan`,
+    description: `Get a tailored diet plan designed for your diet goals`,
+    image: Onboarding4,
   },
 ];
 export default function Onboarding() {
@@ -52,7 +59,7 @@ export default function Onboarding() {
         loop={false}
         dotStyle={styles.dot}
         activeDotStyle={styles.activeDot}
-        paginationStyle={{ bottom: 90 }}
+        paginationStyle={{ bottom: 40 }}
       >
         {slides?.map((swipe) => {
           return (
@@ -60,7 +67,7 @@ export default function Onboarding() {
               <Image
                 source={Onboarding1}
                 resizeMode="contain"
-                style={{ flex: 0.7 }}
+                style={{ flex: 0.8, alignSelf: "center" }}
               />
               <Spacer marginTop={25} />
 
@@ -85,6 +92,12 @@ export default function Onboarding() {
           );
         })}
       </Swiper>
+
+      <LabelButton
+        title="Get Started"
+        // onPress={handleGetStarted}
+        style={{ marginTop: 24 }}
+      />
     </SafeAreaView>
   );
 }
@@ -103,17 +116,17 @@ const styles = StyleSheet.create({
     textAlign: "center",
   },
   dot: {
-    backgroundColor: "rgba(255, 255, 255, 0.4)",
-    width: 6,
-    height: 6,
-    borderRadius: 2,
+    backgroundColor: Colors.light.primaryButton,
+    width: 14,
+    height: 14,
+    borderRadius: 14,
     marginHorizontal: 8,
   },
   activeDot: {
-    backgroundColor: "#000",
-    width: 20,
-    height: 6,
-    borderRadius: 2,
+    backgroundColor: Colors.light.activeDot,
+    width: 14,
+    height: 14,
+    borderRadius: 14,
     marginHorizontal: 8,
   },
 });
