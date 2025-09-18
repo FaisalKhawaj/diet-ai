@@ -20,6 +20,13 @@ export default function AuthLayout() {
           headerShown: false,
         }}
       />
+
+      <Stack.Screen
+        name="questions"
+        options={{
+          headerShown: false,
+        }}
+      />
     </Stack>
   );
 }

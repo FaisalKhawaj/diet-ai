@@ -7,14 +7,14 @@ import {
 import { Spacer } from "@/components/Spacer";
 import { ThemedText } from "@/components/themed-text";
 import { Colors } from "@/constants/theme";
-import { globalStyles } from "@/globalstyles";
 import { fonts } from "@/hooks/useCacheResources";
 import { responsiveFontSize, responsiveLineHeight } from "@/utils";
 import { Image, StyleSheet } from "react-native";
 
 import { LabelButton } from "@/components/LabelButton";
+import { SafeAreaWrapper } from "@/components/SafeAreaWrapper";
+import { router } from "expo-router";
 import { useRef } from "react";
-import { SafeAreaView } from "react-native-safe-area-context";
 import Swiper from "react-native-swiper";
 
 const slides = [
@@ -47,16 +47,17 @@ export default function Onboarding() {
       if (index < slides.length - 1) {
         swiperRef.current.scrollBy(1);
       } else {
-        // router.replace("/(auth)/camera-access");
+        router.replace("/(auth)/questions");
       }
     }
   };
 
   return (
-    <SafeAreaView style={globalStyles.mainWrap}>
+    <SafeAreaWrapper >
       <Swiper
         ref={swiperRef}
         loop={false}
+        onIndexChanged={handleNext}
         dotStyle={styles.dot}
         activeDotStyle={styles.activeDot}
         paginationStyle={{ bottom: 40 }}
@@ -65,7 +66,7 @@ export default function Onboarding() {
           return (
             <>
               <Image
-                source={Onboarding1}
+                source={swipe.image}
                 resizeMode="contain"
                 style={{ flex: 0.8, alignSelf: "center" }}
               />
@@ -94,11 +95,11 @@ export default function Onboarding() {
       </Swiper>
 
       <LabelButton
-        title="Get Started"
+        title="Continue"
         // onPress={handleGetStarted}
         style={{ marginTop: 24 }}
       />
-    </SafeAreaView>
+    </SafeAreaWrapper>
   );
 }
 

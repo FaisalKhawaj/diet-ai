@@ -1,21 +1,22 @@
 import { WelcomeImg } from "@/assets/images";
 import { LabelButton } from "@/components/LabelButton";
+import { SafeAreaWrapper } from "@/components/SafeAreaWrapper";
 import { Spacer } from "@/components/Spacer";
 import { ThemedText } from "@/components/themed-text";
 import { Colors } from "@/constants/theme";
-import { globalStyles } from "@/globalstyles";
 import { fonts } from "@/hooks/useCacheResources";
 import { responsiveFontSize, responsiveLineHeight } from "@/utils";
 import { router } from "expo-router";
 import { Image, StyleSheet } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 export default function Welcome() {
+  const {top,bottom}=useSafeAreaInsets();
   const handleGetStarted = () => {
     router.push("/onboarding");
   };
   return (
-    <SafeAreaView style={globalStyles.mainWrap}>
+    <SafeAreaWrapper >
       <Image source={WelcomeImg} resizeMode="contain" style={{ flex: 1 }} />
 
       <ThemedText
@@ -39,7 +40,7 @@ export default function Welcome() {
         onPress={handleGetStarted}
         style={{ marginTop: 24 }}
       />
-    </SafeAreaView>
+    </SafeAreaWrapper>
   );
 }
 
