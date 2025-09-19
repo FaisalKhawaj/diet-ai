@@ -20,7 +20,8 @@ export const Colors = {
     heading: "#000000",
     primaryButton: "#D1FE67",
     activeDot: "#A0DF0A",
-    back:'#F5F5F5'
+    back:'#F5F5F5',
+    cardBackground:'#F5F5F5'
   },
   dark: {
     text: "#ECEDEE",
@@ -33,7 +34,8 @@ export const Colors = {
     description: "#696767",
     primaryButton: "#D1FE67",
     activeDot: "#A0DF0A",
-        back:'#F5F5F5'
+        back:'#F5F5F5',
+          cardBackground:'#F5F5F5'
   },
 };
 
