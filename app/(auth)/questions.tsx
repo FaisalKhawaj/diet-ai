@@ -3,6 +3,7 @@ import { OptionList } from "@/components/optionlist";
 import { QuestionStep } from "@/components/QuestionStep";
 import { RadioGroup, RadioOption } from "@/components/RadioGroup";
 import { SafeAreaWrapper } from "@/components/SafeAreaWrapper";
+import { Spacer } from "@/components/Spacer";
 import { ThemedText } from "@/components/themed-text";
 import { WeightChart } from "@/components/weightchart";
 import { Colors } from "@/constants/theme";
@@ -133,11 +134,12 @@ export default function Questions() {
        >
  <WeightChart
       style={{ width: 340 }}   // outer card width
-      width={340}              // drawing area width
+      width={320}              // drawing area width
       height={180}
       normalDiet={normalDiet}
       calAI={calAI}
     />
+    <Spacer marginTop={30} />
     <ThemedText style={styles.weightLossDescription}>
       70% of Cat AI Users keep maintaining the weight loss even after a year
     </ThemedText>
