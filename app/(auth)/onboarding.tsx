@@ -8,14 +8,15 @@ import { Spacer } from "@/components/Spacer";
 import { ThemedText } from "@/components/themed-text";
 import { Colors } from "@/constants/theme";
 import { fonts } from "@/hooks/useCacheResources";
-import { responsiveFontSize, responsiveLineHeight } from "@/utils";
-import { Image, StyleSheet } from "react-native";
+import { responsiveFontSize, responsiveHeight, responsiveLineHeight, responsiveWidth } from "@/utils";
+import { Dimensions, Image, StyleSheet, View } from "react-native";
 
 import { LabelButton } from "@/components/LabelButton";
 import { SafeAreaWrapper } from "@/components/SafeAreaWrapper";
 import { router } from "expo-router";
 import { useRef } from "react";
 import Swiper from "react-native-swiper";
+const { width: SCREEN_WIDTH } = Dimensions.get("window");
 
 const slides = [
   {
@@ -39,6 +40,12 @@ const slides = [
     image: Onboarding4,
   },
 ];
+
+const FIGMA_IMAGE_WIDTH = 332.6435546875;
+const FIGMA_IMAGE_HEIGHT = 685.6198120117188;
+const FIGMA_ASPECT_RATIO = FIGMA_IMAGE_WIDTH / FIGMA_IMAGE_HEIGHT;
+
+
 export default function Onboarding() {
   const swiperRef = useRef<any>(null); // Use any to avoid type error
 
@@ -64,12 +71,23 @@ export default function Onboarding() {
       >
         {slides?.map((swipe) => {
           return (
-            <>
+            <View style={{
+              flex:1,
+              position:'relative'
+            }}>
+              <View style={{flex:0.8,alignItems:'center'}}>
               <Image
                 source={swipe.image}
-                resizeMode="contain"
-                style={{ flex: 0.8, alignSelf: "center" }}
+                resizeMode="cover"
+                
+                style={{ height:'100%',
+                  width: SCREEN_WIDTH * 0.89, // scale relative to screen width
+    aspectRatio: FIGMA_ASPECT_RATIO, //
+              //  aspectRatio:0.2
+                   }}
               />
+              </View>
+            
               <Spacer marginTop={25} />
 
               <ThemedText
@@ -89,7 +107,7 @@ export default function Onboarding() {
                 Discover recipes tailored to your{"\n"}diet and flavor
                 preferences
               </ThemedText>
-            </>
+            </View>
           );
         })}
       </Swiper>
@@ -109,6 +127,15 @@ const styles = StyleSheet.create({
     fontSize: responsiveFontSize(25),
     lineHeight: responsiveLineHeight(25, 31),
     textAlign: "center",
+  },
+  figmaImage:{
+    position:'absolute',
+    width:responsiveWidth(332.64),
+    height:responsiveHeight(685.619812),
+    left:48.68,
+    top:56.2,
+    opacity:1,
+    transform:[{rotate:'0deg'}]
   },
   description: {
     fontSize: responsiveFontSize(18),

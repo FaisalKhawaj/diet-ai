@@ -137,7 +137,8 @@ paddingHorizontal:20,
   },
   content: {
     flex: 1,
-    justifyContent: "center",
+    paddingTop:25,
+    // justifyContent: "center",
   },
   continueBtn: {
     backgroundColor: Colors.light.primaryButton, // lime-like color

@@ -7,6 +7,7 @@ import { SplashScreen, Stack } from "expo-router";
 import { StatusBar } from "expo-status-bar";
 import "react-native-reanimated";
 
+import { StepperProvider } from "@/context/stepper";
 import { useColorScheme } from "@/hooks/use-color-scheme";
 import useCachedResources from "@/hooks/useCacheResources";
 import { useEffect } from "react";
@@ -30,6 +31,7 @@ export default function RootLayout() {
   }
   return (
     <ThemeProvider value={colorScheme === "dark" ? DarkTheme : DefaultTheme}>
+          <StepperProvider initialTotal={1}>  
       <Stack>
         <Stack.Screen name="(auth)" options={{ headerShown: false }} />
         <Stack.Screen
@@ -37,6 +39,7 @@ export default function RootLayout() {
           options={{ presentation: "modal", title: "Modal" }}
         />
       </Stack>
+      </StepperProvider>
       <StatusBar style="auto" />
     </ThemeProvider>
   );
