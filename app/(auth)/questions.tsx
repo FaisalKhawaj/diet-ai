@@ -1,17 +1,22 @@
+import { HeightRulerPicker } from "@/components/heightrulepicker";
 import { LimeSlider } from "@/components/limeslider";
 import { OptionList } from "@/components/optionlist";
 import { QuestionStep } from "@/components/QuestionStep";
 import { RadioGroup, RadioOption } from "@/components/RadioGroup";
+import { RulerPicker } from "@/components/rulerpicker";
 import { SafeAreaWrapper } from "@/components/SafeAreaWrapper";
+import { SegmentedPills } from "@/components/segmentpill";
 import { Spacer } from "@/components/Spacer";
 import { ThemedText } from "@/components/themed-text";
 import { WeightChart } from "@/components/weightchart";
 import { Colors } from "@/constants/theme";
 import { useStepper } from "@/context/stepper";
+import { cmToFt, cmToIn, ftToCm, inToCm, Unit } from "@/helpers/measurement";
+import { kgToLbs, kgToOz, lbsToKg, ozToKg, WeightUnit } from "@/helpers/weightunits";
 import { fonts } from "@/hooks/useCacheResources";
 import { responsiveFontSize } from "@/utils";
-import { useEffect, useState } from "react";
-import { StyleSheet, View } from "react-native";
+import { useEffect, useMemo, useState } from "react";
+import { Dimensions, StyleSheet, View } from "react-native";
 
 type Gender = "male" | "female" | "other";
 
@@ -28,11 +33,134 @@ const activityOptions = [
   const calAI      = [0.85, 0.75, 0.55, 0.35, 0.18, 0.08, 0.03, 0.02];
 
 
+  
 
 export default function Questions() {
   const [gender, setGender] = useState<Gender | null>("male");
   const { next, prev, goTo, reset, total,setTotal, current, answers, setAnswer, canNext, setCanNext } = useStepper();
   const [age, setAge] = useState(30);
+  const [unit, setUnit] = useState<Unit>("cm");
+  const [weight,setWeight]=useState<any>('kg');
+  const [cmValue, setCmValue] = useState<any>('');
+  const [weightUnit, setWeightUnit] = useState<WeightUnit>("kg");
+  const [kgValue, setKgValue] = useState<number>(70);           // canonical weight
+  const [weightDisplay, setWeightDisplay] = useState<string>("");
+
+
+  const config = useMemo(() => {
+    switch (unit) {
+      case "ft":
+  return {
+    min: 3.0,
+    max: 8.0,
+    initial: cmToFt(cmValue),
+    step: 1 / 12,             // ✅ one inch per step (NOT 0.01)
+    formatter: (v: number) => {
+      const totalInches = Math.round(v * 12);
+      const feet = Math.floor(totalInches / 12);
+      const inches = totalInches % 12;
+      return `${feet}'${inches}"`;
+    },
+    toCm: ftToCm,
+  };
+      case "in":
+        return {
+          min: cmToIn(120),
+          max: cmToIn(220),
+          initial: cmToIn(cmValue),
+          step: 1,
+          formatter: (v: number) => `${Math.round(v)} in`,
+          toCm: inToCm,
+        };
+      case "cm":
+      default:
+        return {
+          min: 120,
+          max: 220,
+          initial: cmValue,
+          step: 1,
+          formatter: (v: number) => `${v} cm`,
+          toCm: (v: number) => v,
+        };
+    }
+  }, [unit, cmValue]);
+
+
+  const weightCfg = useMemo(() => {
+    const minKg = 30, maxKg = 200;
+  
+    switch (weightUnit) {
+      case "lbs": {
+        const step = 1;
+        return {
+          unit: "lb",
+          min: Math.round(kgToLbs(minKg)),
+          max: Math.round(kgToLbs(maxKg)),
+          step,
+          fractionDigits: 0,
+          fromKg: (kg: number) => kgToLbs(kg),
+          toKg:   (v: number) => lbsToKg(v),
+          fmt:    (v: number) => `${Math.round(v)} lb`,
+          majorEverySteps: 10,  // every 10 lb
+          midEverySteps:   5,   // every 5 lb
+        };
+      }
+      case "ounce": {
+        const step = 1;
+        return {
+          unit: "oz",
+          min: Math.round(kgToOz(minKg)),
+          max: Math.round(kgToOz(maxKg)),
+          step,
+          fractionDigits: 0,
+          fromKg: (kg: number) => kgToOz(kg),
+          toKg:   (v: number) => ozToKg(v),
+          fmt:    (v: number) => `${Math.round(v)} oz`,
+          majorEverySteps: 16,  // every 16 oz (1 lb)
+          midEverySteps:   8,   // every 8 oz (half lb)
+        };
+      }
+      case "grams": {
+        const step = 100;
+        return {
+          unit: "g",
+          min: minKg * 1000,
+          max: maxKg * 1000,
+          step,
+          fractionDigits: 0,
+          fromKg: (kg: number) => kg * 1000,
+          toKg:   (v: number) => v / 1000,
+          fmt:    (v: number) => `${Math.round(v)} g`,
+          majorEverySteps: 10,  // 10*100g = 1000g
+          midEverySteps:   5,   // 5*100g  = 500g
+        };
+      }
+      case "kg":
+      default: {
+        const step = 0.5;
+        return {
+          unit: "kg",
+          min: minKg,
+          max: maxKg,
+          step,
+          fractionDigits: 1,
+          fromKg: (kg: number) => kg,
+          toKg:   (v: number) => v,
+          fmt:    (v: number) => `${v.toFixed(1)} kg`,
+          majorEverySteps: 20,  // 20*0.5 = 10 kg
+          midEverySteps:   10,  // 10*0.5 = 5 kg
+        };
+      }
+    }
+  }, [weightUnit])
+
+  const handleChange = (pickerValue: number) => {
+    const cm = Math.round(config.toCm(pickerValue));
+    setCmValue(cm);
+    // onChangeCm?.(cm);
+  };
+  const [display,setDisplay]=useState<any>(null);
+
 
   console.log('current', current)
   const genderOptions: RadioOption<Gender>[] = [
@@ -144,6 +272,97 @@ export default function Questions() {
       70% of Cat AI Users keep maintaining the weight loss even after a year
     </ThemedText>
         </QuestionStep>
+}
+
+{current===4&&
+         <QuestionStep
+         title={`What is your Current Height?`}
+         step={current + 1}
+         totalSteps={total}
+         onContinue={() => {
+           setAnswer("age", age);
+           next();
+         }}
+         onBack={prev}
+       >
+ <SegmentedPills
+          options={[
+            { id: "cm", label: "Cm" },
+            { id: "ft", label: "Foot" },
+            { id: "in", label: "Inches" },
+          ]}
+          style={{justifyContent:'center'}}
+          value={unit}
+          onChange={(id) => setUnit(id as Unit)}
+        />
+
+<HeightRulerPicker
+  min={config.min}
+  max={config.max}
+  initial={config.initial}
+  step={config.step}
+  unitLabel={unit as "cm" | "in" | "ft"}
+  formatter={config.formatter}
+  onChange={(v) => setDisplay(config.formatter(v))}
+  onChangeEnd={(v) => setCmValue(Math.round(config.toCm(v)))}
+  accent="#D9FF48"
+/>
+   
+        </QuestionStep>
+}
+
+{current===5&&
+         <QuestionStep
+         title={`What is your Current Weight?`}
+         step={current + 1}
+         totalSteps={total}
+         onContinue={() => {
+           setAnswer("age", age);
+           next();
+         }}
+         onBack={prev}
+       >
+         <SegmentedPills
+          options={[
+            { id: "ounce", label: "Ounce" },
+            { id: "grams", label: "Grams" },
+            { id: "lbs", label: "LBS" },
+            { id: "kg", label: "KG" },
+          ]}
+          style={{justifyContent:'center'}}
+          value={weightUnit}
+          onChange={(id) => setWeightUnit(id as WeightUnit)}
+        />
+        <View style={{justifyContent:'center',flex:1}}>
+        <RulerPicker
+        key={`${weightUnit}-${weightCfg.min}-${weightCfg.max}-${weightCfg.step}`} // force correct remount per unit
+        width={Dimensions.get("window").width - 48}
+        height={120}
+        min={weightCfg.min}
+        max={weightCfg.max}
+        step={weightCfg.step}
+        initialValue={weightCfg.fromKg(kgValue)}
+        fractionDigits={weightCfg.fractionDigits}
+        unit={weightCfg.unit}
+        indicatorHeight={80}
+        indicatorColor="black"
+        valueTextStyle={{ fontSize: 28, fontWeight: "800" }}
+        unitTextStyle={{ fontSize: 20 }}
+        onValueChange={(val) => setWeightDisplay(`${val} ${weightCfg.unit}`)}
+        onValueChangeEnd={(val) => {
+          const num = parseFloat(val);
+          // round to the unit’s resolution when storing back to kg
+          const kg = Math.round(weightCfg.toKg(num) * 10) / 10;
+          setKgValue(kg);
+        }}
+        majorEverySteps={weightCfg.majorEverySteps} // e.g., 10 for lb, 16 for oz, 20 for kg(0.5)
+        midEverySteps={weightCfg.midEverySteps} 
+      />
+        </View>
+       
+ 
+       </QuestionStep>
+
 }
 
     </SafeAreaWrapper>

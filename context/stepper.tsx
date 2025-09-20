@@ -32,7 +32,7 @@ const Ctx = createContext<StepperCtx | null>(null);
 export function StepperProvider({
   children,
   initialTotal = 1,
-  initialIndex = 0,
+  initialIndex = 4,
 }: {
   children: ReactNode;
   initialTotal?: number;
