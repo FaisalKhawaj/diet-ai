@@ -1,4 +1,5 @@
 // contexts/StepperContext.tsx
+import { router } from "expo-router";
 import React, { createContext, ReactNode, useContext, useMemo, useState } from "react";
 
 type Answers = Record<string | number, any>;
@@ -32,7 +33,7 @@ const Ctx = createContext<StepperCtx | null>(null);
 export function StepperProvider({
   children,
   initialTotal = 1,
-  initialIndex = 4,
+  initialIndex = 0,
 }: {
   children: ReactNode;
   initialTotal?: number;
@@ -46,11 +47,27 @@ export function StepperProvider({
   const progress = total > 0 ? (current + 1) / total : 0;
   const isFirst = current === 0;
   const isLast = current === total - 1;
-
-  const next = () => setCurrent((i) => Math.min(i + 1, total - 1));
+console.log('isLast',isLast)
+const next = () =>
+  setCurrent((i) => {
+    const atLast = i >= total - 1;
+    if (atLast) {
+      // Navigate when user tries to go past the last step
+      router.push('/personalizing');
+      return i; // keep index stable
+    }
+    return i + 1;
+  });
+  // const next = () => setCurrent((i) => Math.min(i + 1, total - 1));
   const prev = () => setCurrent((i) => Math.max(i - 1, 0));
-  const goTo = (index: number) =>
-    setCurrent(Math.max(0, Math.min(index, total - 1)));
+  const goTo = (index: number) =>{
+    if(!isLast){
+      setCurrent(Math.max(0, Math.min(index, total - 1)));
+    }else{
+      router.push('/personalizing')
+    }
+
+  }
 
   const reset = () => {
     setCurrent(0);

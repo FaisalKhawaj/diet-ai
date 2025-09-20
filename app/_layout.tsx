@@ -34,6 +34,9 @@ export default function RootLayout() {
           <StepperProvider initialTotal={1}>  
       <Stack>
         <Stack.Screen name="(auth)" options={{ headerShown: false }} />
+        <Stack.Screen name="personalizing" options={{ headerShown: false }} />
+        <Stack.Screen name="results" options={{ headerShown: false }} />
+
         <Stack.Screen
           name="modal"
           options={{ presentation: "modal", title: "Modal" }}
