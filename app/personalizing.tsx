@@ -1,10 +1,11 @@
 import { Carrot, Lock } from "@/assets/images";
 import { SafeAreaWrapper } from "@/components/SafeAreaWrapper";
 import { ThemedText } from "@/components/themed-text";
+import { useStepper } from "@/context/stepper";
 import { fonts } from "@/hooks/useCacheResources";
 import { responsiveFontSize, responsiveLineHeight } from "@/utils";
 import { Image } from "expo-image";
-import { router, useLocalSearchParams } from "expo-router";
+import { router } from "expo-router";
 import React, { useEffect, useRef } from "react";
 import { Animated, Easing, StyleSheet, Text, View } from "react-native";
 import Svg, { Circle } from "react-native-svg";
@@ -76,9 +77,8 @@ function SpinningArc() {
 }
 
 export default function Personalizing() {
-
-  const { type } = useLocalSearchParams<{ type?: "question" | "receipe" }>();
-
+ const {type}=useStepper();
+console.log('Personalizing type',type)
   useEffect(() => {
     const timer = setTimeout(() => {
       if(type==='question'){
@@ -88,7 +88,7 @@ export default function Personalizing() {
 
       }
      // <-- replace with your actual next screen path
-    }, 20000); // 20 seconds
+    }, 10000); // 20 seconds
 
     return () => clearTimeout(timer); // cleanup when unmounting
   }, []);

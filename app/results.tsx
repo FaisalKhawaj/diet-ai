@@ -7,6 +7,7 @@ import { ThemedText } from "@/components/themed-text";
 import { fonts } from "@/hooks/useCacheResources";
 import { responsiveFontSize, responsiveHeight, responsiveLineHeight, responsiveWidth } from "@/utils";
 import { Image } from "expo-image";
+import { router } from "expo-router";
 import { Platform, ScrollView, StyleSheet, View } from "react-native";
 
 
@@ -133,6 +134,7 @@ export default function Results() {
             <Spacer marginTop={30} />
             <LabelButton
         title={`Let’s start the journey`}
+        onPress={()=>router.push('/paywall')}
         // onPress={handleGetStarted}
         style={{ marginTop: 24 }}
       />

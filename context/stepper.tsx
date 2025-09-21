@@ -63,14 +63,14 @@ const next = () =>
   // const next = () => setCurrent((i) => Math.min(i + 1, total - 1));
   const prev = () => setCurrent((i) => Math.max(i - 1, 0));
   const goTo = (index: number) =>{
-    
+    console.log('gotTo type:',type)
     if(!isLast){
       setCurrent(Math.max(0, Math.min(index, total - 1)));
     }else{
       if(type=='receipe'){
-        router.push({ pathname: "/personalizing", params: { type:type} });
+        router.push({ pathname: "/personalizing", params: { type:'receipe'} });
       }else{
-        router.push({ pathname: "/personalizing", params: { type:type} });
+        router.push({ pathname: "/personalizing", params: { type:'question'} });
       }
     }
 

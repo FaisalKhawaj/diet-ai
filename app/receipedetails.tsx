@@ -139,7 +139,7 @@ export default function ReceipeDetails() {
         data={instructions}
         renderItem={renderInstructions}
         keyExtractor={(it) => String(it.id)}
-        estimatedItemSize={56}
+
         ListHeaderComponent={Header}
         contentContainerStyle={{ paddingBottom: 24 }}
         showsVerticalScrollIndicator={false}

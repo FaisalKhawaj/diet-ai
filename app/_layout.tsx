@@ -43,6 +43,7 @@ export default function RootLayout() {
         <Stack.Screen name="results" options={{ headerShown: false }} />
         <Stack.Screen name="receipe" options={{ headerShown: false }} />
         <Stack.Screen name="receipedetails" options={{ headerShown: false }} />
+        <Stack.Screen name="paywall" options={{ headerShown: false }} />
 
         <Stack.Screen
           name="modal"

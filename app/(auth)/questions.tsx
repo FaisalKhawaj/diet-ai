@@ -42,7 +42,7 @@ const calAI = [0.85, 0.75, 0.55, 0.35, 0.18, 0.08, 0.03, 0.02];
 export default function Questions() {
   const [gender, setGender] = useState<Gender | null>("male");
   const [goal, setGoal] = useState('');
-  const { next, prev, goTo, reset, total, setTotal, current, answers,isLast, setAnswer, canNext, setCanNext ,setType} = useStepper();
+  const { next, prev, goTo, reset,type, total, setTotal, current, answers,isLast, setAnswer, canNext, setCanNext ,setType} = useStepper();
   const [age, setAge] = useState(30);
   const [unit, setUnit] = useState<Unit>("cm");
   const [weight, setWeight] = useState<any>('kg');
@@ -58,7 +58,7 @@ const preferDiets=[
   { label: "Keto", value: "keto" },
   { label: "Mediterranean", value: "mediterranean" },
 ]
-
+console.log('type',type)
   const config = useMemo(() => {
     switch (unit) {
       case "ft":
