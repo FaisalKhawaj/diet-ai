@@ -143,12 +143,11 @@ export default function Paywall() {
     stepIndicatorLabelFinishedColor: 'transparent',
     stepIndicatorLabelUnFinishedColor: 'transparent',
     labelAlign: 'flex-start',
-    labelSize: 13,
+    // labelSize: 15,
     labelColor: '#767676',
     currentStepLabelColor: '#767676',
   }}
   renderStepIndicator={({ position }) => (
-   
     <Image source={items[position].img} style={{width:20,height:20}} />
   )}
   labels={items.map(i => i.title)}
@@ -239,7 +238,7 @@ function PlanCard({
                             badge.tone === "lime" ? styles.badgeLime : styles.badgeDark,
                         ]}
                     >
-                        <Text style={[styles.badgeText, badge.tone === "dark" && { color: "#fff" }]}>
+                        <Text style={[styles.badgeText,{ color: "#fff" }]}>
                             {badge.text}
                         </Text>
                     </View>
@@ -479,7 +478,7 @@ progressTitle:{
         borderWidth: 2,
         borderColor: "#EFEFEF",
         borderRadius: 18,
-        paddingVertical: 14,
+        paddingVertical: 20,
         paddingHorizontal: 16,
         backgroundColor: "#fff",
         flexDirection: "row",
@@ -497,8 +496,10 @@ progressTitle:{
     },
     planRight: {
         color: "#4A4A4A",
-        fontSize: 14,
-        fontWeight: "600",
+        fontSize:responsiveFontSize(16),
+        lineHeight:responsiveLineHeight(16,20),
+        fontFamily:fonts.secondary.secondaryRegular,
+       
     },
 
     badge: {
@@ -506,7 +507,7 @@ progressTitle:{
         paddingVertical: 4,
         borderRadius: 10,
     },
-    badgeLime: { backgroundColor: "#D9FF48" },
+    badgeLime: { backgroundColor: "#12DCA5" },
     badgeDark: { backgroundColor: "#000" },
     badgeText: { fontSize: 11, fontWeight: "700", color: "#000" },
 

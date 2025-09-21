@@ -1,3 +1,5 @@
+
+/* eslint-disable react-native/no-inline-styles */
 import { fonts } from "@/hooks/useCacheResources";
 import { responsiveFontSize } from "@/utils";
 import React, { useEffect, useMemo, useRef, useState } from "react";
@@ -12,31 +14,34 @@ import {
   View,
 } from "react-native";
 
-const UNIT_HEIGHT = 18;          // px per 1 step (1 cm, 1 in, or 1/12 ft)
-const RULER_WIDTH = 150;
+type Props = {
+  min?: number;                 // e.g. 120
+  max?: number;                 // e.g. 220
+  initial?: number;             // e.g. 175
+  unitLabel: "cm" | "in" | "ft";
+  step?: number;                // 1 for cm/in, 1/12 for ft if using inches tick
+  formatter?: (v: number, unit?: string) => string;
+  onChange?: (v: number) => void;
+  onChangeEnd?: (v: number) => void;
+  accent?: string;              // lime dot color
+  decelerationRate?: "fast" | "normal" | number;
+};
+
+
+
+/** --- tune these to match design density exactly --- */
+const UNIT_HEIGHT = 18;         // px per 1 step
+const RULER_WIDTH = 150;        // width of tick column
 const DOT_SIZE = 16;
 const DOT_LEFT = 12;
 const VALUE_GAP = 6;
-
 const LINE_COLOR = "#DCDCDC";
+const LABEL_COLOR = "#9B9B9B";
+const TICK_COLOR = "#D9D9D9";
 const LINE_THICKNESS = Math.max(2, StyleSheet.hairlineWidth * 2);
 const OVERLAP = StyleSheet.hairlineWidth;
-const VALUE_BOX_W = 64;
 const EPS = 1e-6;
 const toInt = (x: number) => Math.round(x + EPS);
-
-type Props = {
-  min?: number;
-  max?: number;
-  initial?: number;
-  unitLabel: "cm" | "in" | "ft";
-  step?: number;
-  formatter?: (value: number, unitLabel?: string) => string;
-  onChange?: (value: number) => void;
-  onChangeEnd?: (value: number) => void;
-  accent?: string;
-  decelerationRate?: "fast" | "normal" | number;
-};
 
 export const HeightRulerPicker: React.FC<Props> = ({
   min = 120,
@@ -52,23 +57,39 @@ export const HeightRulerPicker: React.FC<Props> = ({
 }) => {
   const scrollRef = useRef<ScrollView>(null);
   const [rulerH, setRulerH] = useState(0);
-  const [value, setValue] = useState<number>(initial);
+  const clamp = (n: number, lo: number, hi: number) => Math.min(hi, Math.max(lo, n));
 
-  // ── Spacing (single source of truth)
+  const safeInitial = useMemo(() => {
+    const n = Number(initial);
+    if (!Number.isFinite(n)) return min;
+    return Math.min(max, Math.max(min, n));
+  }, [initial, min, max]);
+
+  // const [value, setValue] = useState<number>(initial);
+  const [value, setValue] = useState<number>(safeInitial);
+
+  // Dynamic width for the “191 cm” bubble so it stays centered above the dot
+  const [valW, setValW] = useState(0);
+
+  // One source of truth for vertical spacing
   const spacing = UNIT_HEIGHT;
 
-  // The visible “window” is the ruler column height
+  // The visual center of the ruler column, where the hairline/dot sits
   const centerOffset = useMemo(
     () => Math.max(0, rulerH / 2 - spacing / 2),
     [rulerH, spacing]
   );
 
   // Helpers: index <-> y, value <-> index
-  const idxFromY = (y: number) => Math.round((y + centerOffset) / spacing);
-  const yFromIdx = (idx: number) => idx * spacing - centerOffset;
+  const idxFromY = (y: number) => Math.round(y / spacing);
+  
+  const yFromIdx = (idx: number) => idx * spacing;
 
-  const idxFromValue = (v: number) =>
-    Math.round((v - min) / step);
+
+ 
+  
+
+  const idxFromValue = (v: number) => Math.round((v - min) / step);
 
   const valueFromIdx = (idx: number) => {
     const raw = min + idx * step;
@@ -76,20 +97,18 @@ export const HeightRulerPicker: React.FC<Props> = ({
     return Number(clamped.toFixed(6));
   };
 
-  // Jump to initial when the ruler knows its height or inputs change
-  useEffect(() => {
-    if (!rulerH) return;
-    const idx = idxFromValue(initial);
-    const y = yFromIdx(idx);
-    requestAnimationFrame(() => {
-      scrollRef.current?.scrollTo({ y, animated: false });
-      setValue(initial);
-      onChange?.(initial);
-    });
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [rulerH, min, max, initial, step]);
+useEffect(() => {
+  if (!rulerH) return;
+  const idx = idxFromValue(safeInitial);
+  const y = yFromIdx(idx);
+  requestAnimationFrame(() => {
+    scrollRef.current?.scrollTo({ y, animated: false });
+    setValue(safeInitial);
+    onChange?.(safeInitial);
+  });
+}, [rulerH, safeInitial, step]);
 
-  // Scroll handlers
+  // Live update while scrolling
   const handleScroll = (e: NativeSyntheticEvent<NativeScrollEvent>) => {
     const y = e.nativeEvent.contentOffset.y;
     const idx = idxFromY(y);
@@ -100,20 +119,26 @@ export const HeightRulerPicker: React.FC<Props> = ({
     }
   };
 
+  
+
+  // Snap to the nearest tick and emit final value
   const handleMomentumEnd = (e: NativeSyntheticEvent<NativeScrollEvent>) => {
     const y = e.nativeEvent.contentOffset.y;
     const idx = idxFromY(y);
     const v = valueFromIdx(idx);
     const snapY = yFromIdx(idx);
-    // snap exactly to the tick we just calculated from y
     scrollRef.current?.scrollTo({ y: snapY, animated: true });
     setValue(v);
     onChangeEnd?.(v);
   };
 
-  // Items
-  const itemCount = Math.round((max - min) / step) + 1;
+  
 
+  // How many items to render
+  // const itemCount = Math.round((max - min) / step) + 1;
+  const itemCount = Math.floor(((max - min) / step) + EPS) + 1;
+
+  // Decide tick length + label for each row
   function classifyAndLabel(i: number): {
     type: "major" | "mid" | "minor";
     label?: string;
@@ -124,7 +149,7 @@ export const HeightRulerPicker: React.FC<Props> = ({
       const cm = toInt(v);
       return {
         type: cm % 10 === 0 ? "major" : cm % 5 === 0 ? "mid" : "minor",
-        label: String(cm), // show every cm on the right
+        label: String(cm), // show per-cm numbers on the right column (like your mock)
       };
     }
 
@@ -136,7 +161,7 @@ export const HeightRulerPicker: React.FC<Props> = ({
       };
     }
 
-    // ft mode: min/max are in feet, step is 1/12 ft (1 inch)
+    // Feet mode — one step is 1 inch (step=1/12). Label as 5'11"
     const absInches = toInt(min * 12 + i * step * 12);
     const inches = absInches % 12;
     const feet = Math.floor(absInches / 12);
@@ -148,17 +173,15 @@ export const HeightRulerPicker: React.FC<Props> = ({
 
   return (
     <View style={styles.wrap}>
-      {/* LEFT: unit label */}
-      <View style={styles.leftColumn} pointerEvents="none">
-        <Text style={styles.unitText}>{unitLabel}</Text>
-      </View>
+      {/* Spacer so the ruler sits on the right half like the design.
+          If you want the left unit text column again, replace this <View /> with your left column. */}
+      <View style={{ flex: 1 }} />
 
       {/* RULER COLUMN */}
       <View
         style={styles.rulerArea}
         onLayout={(e: LayoutChangeEvent) => setRulerH(e.nativeEvent.layout.height)}
       >
-        {/* Scrollable ticks */}
         <ScrollView
           ref={scrollRef}
           showsVerticalScrollIndicator={false}
@@ -189,40 +212,67 @@ export const HeightRulerPicker: React.FC<Props> = ({
           })}
         </ScrollView>
 
-        {/* CENTER HAIRLINE (truth) */}
+        {/* CENTER HAIRLINE inside the ruler */}
         <View pointerEvents="none" style={styles.centerOverlay}>
           <View style={styles.centerHairline} />
         </View>
       </View>
 
-      {/* CROSS-LINE (dot + left guide) EXACTLY aligned with hairline */}
+      {/* CROSS-LINE (dot + left guide) aligned with the center hairline */}
       <View pointerEvents="none" style={styles.crossline}>
         <View style={[styles.dot, { backgroundColor: accent }]} />
         <View style={styles.crossGuide} />
       </View>
 
-      {/* VALUE ABOVE DOT */}
-      <View pointerEvents="none" style={styles.leftValueOverlay}>
-        <Text style={styles.leftValue}>
-          {formatter?.(value, unitLabel) ?? `${Math.round(value)} ${unitLabel}`}
-        </Text>
+      {/* VALUE ABOVE DOT — centered horizontally on the dot regardless of text width */}
+      <View
+        pointerEvents="none"
+        style={[
+          styles.valueOverlay,
+          {
+            left: DOT_LEFT + DOT_SIZE / 2,
+            transform: [
+              { translateX: -valW / 2 },
+              { translateY: -(DOT_SIZE / 2 + VALUE_GAP) },
+            ],
+          },
+        ]}
+        onLayout={(e) => setValW(e.nativeEvent.layout.width)}
+      >
+        <View style={{ flexDirection: "row", alignItems: "baseline" }}>
+          <Text style={styles.valueNum}>
+            {formatter?.(value, unitLabel)?.replace(/\s*\w+$/, "") ??
+              Math.round(value)}
+          </Text>
+          <Text style={styles.valueUnit}> {unitLabel}</Text>
+        </View>
       </View>
     </View>
   );
 };
 
 const styles = StyleSheet.create({
-  wrap: { flex: 1, backgroundColor: "#fff", flexDirection: "row", position: "relative" },
+  wrap: {
+    flex: 1,
+    backgroundColor: "#fff",
+    // backgroundColor:'red',
+    flexDirection: "row",
+    position: "relative",
+  },
 
-  leftColumn: { flex: 1, paddingTop: 24 },
-  unitText: { color: "#000", fontSize: 16, marginLeft: 16, marginBottom: 18 },
-
+  // Ruler on the right side
   rulerArea: { width: RULER_WIDTH, alignSelf: "stretch", position: "relative" },
 
-  tick: { alignSelf: "flex-start", height: 2, backgroundColor: "#D9D9D9", opacity: 0.9 },
-  tickLabel: { position: "absolute", right: 8, top: 2, color: "#000", fontSize: 12 },
+  tick: { alignSelf: "flex-start", height: 2, backgroundColor: TICK_COLOR, opacity: 0.9 },
+  tickLabel: {
+    position: "absolute",
+    right: 8,
+    top: 2,
+    fontSize: 12,
+    color: LABEL_COLOR,
+  },
 
-  // center hairline in the RULER column
+  // Center hairline
   centerOverlay: {
     position: "absolute",
     right: 0,
@@ -233,11 +283,11 @@ const styles = StyleSheet.create({
   },
   centerHairline: { width: "100%", height: LINE_THICKNESS, backgroundColor: LINE_COLOR },
 
-  // crossline spans from left column into the ruler and overlaps a hairline by 1px
+  // Crossline spanning from left content to ruler
   crossline: {
     position: "absolute",
     left: DOT_LEFT,
-    right: RULER_WIDTH - OVERLAP, // tiny overlap into the ruler to look “connected”
+    right: RULER_WIDTH - OVERLAP, // overlap into ruler so it looks connected
     top: "50%",
     marginTop: -DOT_SIZE / 2,
     height: DOT_SIZE,
@@ -248,17 +298,21 @@ const styles = StyleSheet.create({
   dot: { width: DOT_SIZE, height: DOT_SIZE, borderRadius: DOT_SIZE / 2 },
   crossGuide: { flex: 1, height: LINE_THICKNESS, backgroundColor: LINE_COLOR },
 
-  leftValueOverlay: {
+  // Selected value above the dot (inline unit)
+  valueOverlay: {
     position: "absolute",
-    left: DOT_LEFT + DOT_SIZE / 2 - VALUE_BOX_W / 2,
     top: "50%",
-    transform: [{ translateY: -(DOT_SIZE / 2 + VALUE_GAP + 10) }],
-    alignItems: "center",
     zIndex: 4,
+    alignItems: "center",
   },
-  leftValue: {
+  valueNum: {
     fontSize: responsiveFontSize(24),
     fontFamily: fonts.primary.primaryBold,
+    color: "#000",
+  },
+  valueUnit: {
+    fontSize: responsiveFontSize(16),
+    fontFamily: fonts.primary.primaryMedium,
     color: "#000",
   },
 });

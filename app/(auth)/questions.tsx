@@ -37,7 +37,9 @@ const normalDiet = [0.72, 0.60, 0.45, 0.35, 0.40, 0.55, 0.75, 0.95];
 const calAI = [0.85, 0.75, 0.55, 0.35, 0.18, 0.08, 0.03, 0.02];
 
 
-
+const EPS = 1e-6;
+const asNum = (v: any, fallback: number) =>
+  Number.isFinite(Number(v)) ? Number(v) : fallback;
 
 export default function Questions() {
   const [gender, setGender] = useState<Gender | null>("male");
@@ -46,7 +48,9 @@ export default function Questions() {
   const [age, setAge] = useState(30);
   const [unit, setUnit] = useState<Unit>("cm");
   const [weight, setWeight] = useState<any>('kg');
-  const [cmValue, setCmValue] = useState<any>('');
+  // const [cmValue, setCmValue] = useState<any>('');
+  const [cmValue, setCmValue] = useState<number>(120);
+
   const [weightUnit, setWeightUnit] = useState<WeightUnit>("kg");
   const [kgValue, setKgValue] = useState<number>(70);           // canonical weight
   const [weightDisplay, setWeightDisplay] = useState<string>("");
@@ -60,15 +64,19 @@ const preferDiets=[
 ]
 console.log('type',type)
   const config = useMemo(() => {
+    const baseCm = asNum(cmValue, 120); // always a valid cm
+
     switch (unit) {
       case "ft":
+        const initial = cmToFt(baseCm);            // 3.94…
+
         return {
           min: 3.0,
           max: 8.0,
-          initial: cmToFt(cmValue),
+          initial,
           step: 1 / 12,             // ✅ one inch per step (NOT 0.01)
           formatter: (v: number) => {
-            const totalInches = Math.round(v * 12);
+            const totalInches = Math.round((v + EPS) * 12);
             const feet = Math.floor(totalInches / 12);
             const inches = totalInches % 12;
             return `${feet}'${inches}"`;
@@ -77,9 +85,9 @@ console.log('type',type)
         };
       case "in":
         return {
-          min: cmToIn(120),
-          max: cmToIn(220),
-          initial: cmToIn(cmValue),
+          min: Math.round(cmToIn(120)),
+          max: Math.round(cmToIn(220)),
+          initial: cmToIn(baseCm),
           step: 1,
           formatter: (v: number) => `${Math.round(v)} in`,
           toCm: inToCm,
@@ -89,7 +97,7 @@ console.log('type',type)
         return {
           min: 120,
           max: 220,
-          initial: cmValue,
+          initial: Math.round(baseCm),              // make sure it’s an int cm
           step: 1,
           formatter: (v: number) => `${v} cm`,
           toCm: (v: number) => v,
@@ -325,6 +333,8 @@ console.log('type',type)
           />
 
           <HeightRulerPicker
+            key={`${unit}-${config.min}-${config.max}-${config.step}-${config.initial}`}
+
             min={config.min}
             max={config.max}
             initial={config.initial}

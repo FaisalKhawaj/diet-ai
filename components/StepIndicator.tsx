@@ -210,7 +210,9 @@ const StepIndicator = ({
     }
     return <Animated.View style={progressBarStyle} />;
   };
+  const rowHeight = Math.max(56, customStyles.currentStepIndicatorSize + 16);
 
+  
   const renderStepIndicator = () => {
     let steps = [];
     for (let position = 0; position < stepCount; position++) {
@@ -224,7 +226,7 @@ const StepIndicator = ({
               styles.stepContainer,
               direction === 'vertical'
                 ? { flexDirection: 'column',
-                  minHeight: Math.max(56, customStyles.currentStepIndicatorSize + 24),
+                  minHeight: rowHeight,
 
                  }
                 : { flexDirection: 'row', },
@@ -247,10 +249,12 @@ const StepIndicator = ({
             ? {
                 flexDirection: 'column',
                 width: customStyles.currentStepIndicatorSize,
+                justifyContent: 'space-between' 
               }
             : {
                 flexDirection: 'row',
                 height: customStyles.currentStepIndicatorSize,
+                justifyContent: 'space-between' 
               },
         ]}
       >
@@ -306,8 +310,8 @@ const StepIndicator = ({
         style={[
           styles.stepLabelsContainer,
           direction === 'vertical'
-            ? { flexDirection: 'column', paddingHorizontal: 4 }
-            : { flexDirection: 'row', paddingVertical: 4 },
+            ? { flexDirection: 'column', paddingHorizontal: 4,justifyContent: 'space-between' }
+            : { flexDirection: 'row', paddingVertical: 4,justifyContent: 'space-between' },
           { alignItems: customStyles.labelAlign },
         ]}
       >
@@ -328,7 +332,7 @@ const StepIndicator = ({
           height: sizeAnim,
           width: sizeAnim,
           borderRadius: borderRadiusAnim,
-          overflow: 'hidden',
+          // overflow: 'hidden',
         };
         indicatorLabelStyle = {
           overflow: 'hidden',
@@ -346,7 +350,7 @@ const StepIndicator = ({
           height: staleSizeAnim,
           width: staleSizeAnim,
           borderRadius: customStyles.stepIndicatorSize / 2,
-          overflow: 'hidden',
+          // overflow: 'hidden',
         };
         indicatorLabelStyle = {
           overflow: 'hidden',
@@ -364,7 +368,7 @@ const StepIndicator = ({
           height: staleSizeAnim,
           width: staleSizeAnim,
           borderRadius: customStyles.stepIndicatorSize / 2,
-          overflow: 'hidden',
+          // overflow: 'hidden',
         };
         indicatorLabelStyle = {
           overflow: 'hidden',
