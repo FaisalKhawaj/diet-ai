@@ -13,7 +13,8 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 export default function Welcome() {
   const {top,bottom}=useSafeAreaInsets();
   const handleGetStarted = () => {
-    router.push("/onboarding");
+    router.push('/receipe')
+    // router.push("/onboarding");
   };
   return (
     <SafeAreaWrapper >

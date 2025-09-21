@@ -21,7 +21,9 @@ export const Colors = {
     primaryButton: "#D1FE67",
     activeDot: "#A0DF0A",
     back:'#F5F5F5',
-    cardBackground:'#F5F5F5'
+    cardBackground:'#F5F5F5',
+        inputBg:'#F5F5F5',
+        inputPlaceholder:'#696767'
   },
   dark: {
     text: "#ECEDEE",
@@ -35,7 +37,9 @@ export const Colors = {
     primaryButton: "#D1FE67",
     activeDot: "#A0DF0A",
         back:'#F5F5F5',
-          cardBackground:'#F5F5F5'
+          cardBackground:'#F5F5F5',
+          inputBg:'#F5F5F5',
+           inputPlaceholder:'#696767'
   },
 };
 

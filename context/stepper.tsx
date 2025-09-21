@@ -18,7 +18,8 @@ type StepperCtx = {
   goTo: (index: number) => void;
   reset: () => void;
   setTotal: (n: number) => void;
-
+type:any;
+setType?:any;
   // answers
   answers: Answers;
   setAnswer: (key: string | number, value: any) => void;
@@ -41,6 +42,7 @@ export function StepperProvider({
 }) {
   const [current, setCurrent] = useState(initialIndex);
   const [total, setTotal] = useState(initialTotal);
+  const [type,setType]=useState('questions')
   const [answers, setAnswers] = useState<Answers>({});
   const [canNext, setCanNext] = useState(true); // parent screen can gate "Next" per step
 
@@ -61,10 +63,15 @@ const next = () =>
   // const next = () => setCurrent((i) => Math.min(i + 1, total - 1));
   const prev = () => setCurrent((i) => Math.max(i - 1, 0));
   const goTo = (index: number) =>{
+    
     if(!isLast){
       setCurrent(Math.max(0, Math.min(index, total - 1)));
     }else{
-      router.push('/personalizing')
+      if(type=='receipe'){
+        router.push({ pathname: "/personalizing", params: { type:type} });
+      }else{
+        router.push({ pathname: "/personalizing", params: { type:type} });
+      }
     }
 
   }
@@ -94,6 +101,8 @@ const next = () =>
       setAnswer,
       canNext,
       setCanNext,
+      setType,
+      type,
     }),
     [current, total, progress, isFirst, isLast, answers, canNext]
   );

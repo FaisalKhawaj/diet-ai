@@ -7,12 +7,16 @@ export default function AuthLayout() {
         headerShown: false,
       }}
     >
+      <Stack.Screen name="receipe" options={{ headerShown: false }} />
+
       <Stack.Screen
         name="welcome"
         options={{
           headerShown: false,
         }}
       />
+
+
 
       <Stack.Screen
         name="onboarding"

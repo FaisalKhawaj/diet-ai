@@ -4,7 +4,7 @@ import { ThemedText } from "@/components/themed-text";
 import { fonts } from "@/hooks/useCacheResources";
 import { responsiveFontSize, responsiveLineHeight } from "@/utils";
 import { Image } from "expo-image";
-import { router } from "expo-router";
+import { router, useLocalSearchParams } from "expo-router";
 import React, { useEffect, useRef } from "react";
 import { Animated, Easing, StyleSheet, Text, View } from "react-native";
 import Svg, { Circle } from "react-native-svg";
@@ -76,9 +76,18 @@ function SpinningArc() {
 }
 
 export default function Personalizing() {
+
+  const { type } = useLocalSearchParams<{ type?: "question" | "receipe" }>();
+
   useEffect(() => {
     const timer = setTimeout(() => {
-      router.push("/results"); // <-- replace with your actual next screen path
+      if(type==='question'){
+        router.push("/results"); 
+      } else{
+        router.push("/receipedetails"); 
+
+      }
+     // <-- replace with your actual next screen path
     }, 20000); // 20 seconds
 
     return () => clearTimeout(timer); // cleanup when unmounting
@@ -91,7 +100,9 @@ export default function Personalizing() {
           <SpinningArc />
         </View>
 
-        <ThemedText style={styles.title}>Personalizing…</ThemedText>
+        <ThemedText style={styles.title}>
+          {type === 'question' ?`Personalizing…` : `Generating...`}
+        </ThemedText>
 
         <View style={styles.bottom}>
           <View style={styles.lockBadge}>
