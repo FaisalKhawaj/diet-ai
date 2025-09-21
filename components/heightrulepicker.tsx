@@ -40,6 +40,7 @@ const LABEL_COLOR = "#9B9B9B";
 const TICK_COLOR = "#D9D9D9";
 const LINE_THICKNESS = Math.max(2, StyleSheet.hairlineWidth * 2);
 const OVERLAP = StyleSheet.hairlineWidth;
+const ANCHOR_PCT = 0.44;
 const EPS = 1e-6;
 const toInt = (x: number) => Math.round(x + EPS);
 
@@ -80,9 +81,18 @@ export const HeightRulerPicker: React.FC<Props> = ({
     [rulerH, spacing]
   );
 
+  // ✅ add:
+const anchor = useMemo(() => {
+  if (!rulerH) return 0;
+  return Math.round(rulerH * ANCHOR_PCT);
+}, [rulerH]);
+
+const padTop  = Math.max(0, anchor - spacing / 2);
+const padBot  = Math.max(0, rulerH ? (rulerH - anchor - spacing / 2) : 0);
+
   // Helpers: index <-> y, value <-> index
   const idxFromY = (y: number) => Math.round(y / spacing);
-  
+
   const yFromIdx = (idx: number) => idx * spacing;
 
 
@@ -175,7 +185,7 @@ useEffect(() => {
     <View style={styles.wrap}>
       {/* Spacer so the ruler sits on the right half like the design.
           If you want the left unit text column again, replace this <View /> with your left column. */}
-      <View style={{ flex: 1 }} />
+      <View style={{ flex: 1 ,}} />
 
       {/* RULER COLUMN */}
       <View
@@ -190,8 +200,10 @@ useEffect(() => {
           scrollEventThrottle={16}
           decelerationRate={decelerationRate}
           contentContainerStyle={{
-            paddingTop: centerOffset,
-            paddingBottom: centerOffset,
+            paddingTop: padTop,
+            paddingBottom: padBot,
+            // backgroundColor:'red',
+        
           }}
         >
           {Array.from({ length: itemCount }).map((_, i) => {
@@ -213,13 +225,14 @@ useEffect(() => {
         </ScrollView>
 
         {/* CENTER HAIRLINE inside the ruler */}
-        <View pointerEvents="none" style={styles.centerOverlay}>
+        <View pointerEvents="none" style={[styles.centerOverlay, { top: anchor - LINE_THICKNESS / 2 }]}>
           <View style={styles.centerHairline} />
         </View>
       </View>
 
       {/* CROSS-LINE (dot + left guide) aligned with the center hairline */}
-      <View pointerEvents="none" style={styles.crossline}>
+      {/* <View pointerEvents="none" style={styles.crossline}> */}
+      <View pointerEvents="none" style={[styles.crossline, { top: anchor - DOT_SIZE / 2 }]}>
         <View style={[styles.dot, { backgroundColor: accent }]} />
         <View style={styles.crossGuide} />
       </View>
@@ -230,6 +243,7 @@ useEffect(() => {
         style={[
           styles.valueOverlay,
           {
+            top: anchor,  
             left: DOT_LEFT + DOT_SIZE / 2,
             transform: [
               { translateX: -valW / 2 },
@@ -276,8 +290,8 @@ const styles = StyleSheet.create({
   centerOverlay: {
     position: "absolute",
     right: 0,
-    top: "50%",
-    transform: [{ translateY: -LINE_THICKNESS / 2 }],
+    // top: "50%",
+    // transform: [{ translateY: -LINE_THICKNESS / 2 }],
     width: RULER_WIDTH,
     zIndex: 3,
   },
@@ -288,8 +302,8 @@ const styles = StyleSheet.create({
     position: "absolute",
     left: DOT_LEFT,
     right: RULER_WIDTH - OVERLAP, // overlap into ruler so it looks connected
-    top: "50%",
-    marginTop: -DOT_SIZE / 2,
+    // top: "50%",
+    // marginTop: -DOT_SIZE / 2,
     height: DOT_SIZE,
     flexDirection: "row",
     alignItems: "center",
@@ -301,7 +315,7 @@ const styles = StyleSheet.create({
   // Selected value above the dot (inline unit)
   valueOverlay: {
     position: "absolute",
-    top: "50%",
+    // top: "50%",
     zIndex: 4,
     alignItems: "center",
   },
