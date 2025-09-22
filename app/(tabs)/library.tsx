@@ -1,6 +1,7 @@
 import { PillTabButton } from "@/components/pilltabbutton";
 import { Spacer } from "@/components/Spacer";
 import { ThemedText } from "@/components/themed-text";
+import { useRecipe } from "@/context/recipecontext";
 import { fonts } from "@/hooks/useCacheResources";
 import { responsiveFontSize, responsiveLineHeight } from "@/utils";
 import { FlashList } from "@shopify/flash-list";
@@ -225,10 +226,10 @@ const recipes: RecipeCard[] = [
 
 
 
-const RecipeItem = ({ item }: { item: RecipeCard }) => {
+const RecipeItem = ({handlePress, item }: {handlePress:()=>void, item: RecipeCard }) => {
     console.log('item',item)
     return (
-        <Pressable style={styles.mainCardWrap}>
+        <Pressable onPress={handlePress} style={styles.mainCardWrap}>
             <View style={styles.rowSpaceBetween}>
                 <ThemedText style={styles.timeAgo}>
                     {item.servingLabel}
@@ -271,7 +272,7 @@ const ITEM_GAP = 10;
 export default function Library() {
 
     const [tab, setTab] = useState<"diet" | "recipe">("diet");
-
+    const {setShowRecipeAI,setShowAddRecipe,setShowDietRecipe}=useRecipe();
     const ListHeader = () => {
         return (
             <Fragment>
@@ -290,11 +291,20 @@ export default function Library() {
                 <Spacer marginTop={10} />
             </Fragment>
         )
+    };
+
+    const handleClickCard=()=>{
+        if(tab==='diet'){
+            setShowDietRecipe(true);
+        }else{
+            setShowRecipeAI(true);
+        }
+
     }
 
     const renderRecipe = ({ item }: { item: RecipeCard }) => {
         return (
-            <RecipeItem item={item} />
+            <RecipeItem item={item} handlePress={handleClickCard} />
         )
     }
 

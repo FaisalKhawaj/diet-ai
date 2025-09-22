@@ -1,13 +1,14 @@
-import { SafeAreaWrapper } from "@/components/SafeAreaWrapper";
 import { Spacer } from "@/components/Spacer";
 import { ThemedText } from "@/components/themed-text";
 import { Colors } from "@/constants/theme";
+import { useRecipe } from "@/context/recipecontext";
 import { globalStyles } from "@/globalstyles";
 import { fonts } from "@/hooks/useCacheResources";
 import { responsiveFontSize, responsiveLineHeight } from "@/utils";
 import { Ionicons } from "@expo/vector-icons";
 import { FlashList, ListRenderItem } from "@shopify/flash-list";
 import { router } from "expo-router";
+import { MotiView } from "moti";
 import { Pressable, StyleSheet, View } from "react-native";
 
 const BulletItem = ({ title }: { title: string }) => {
@@ -71,13 +72,20 @@ export default function RecipeAIPopup() {
     index,
   }) => <NumberedItem title={item.title} index={index + 1} />;
 
+
+  const { showRecipeAI,
+    setShowRecipeAI}=useRecipe();
+
   const Header = () => (
     <View>
       {/* Top bar */}
       <View style={[globalStyles.row, { alignItems: "center" }]}>
         <Pressable
           style={globalStyles.overflowBackButton}
-          onPress={() => router.back()}
+          onPress={() => {
+            setShowRecipeAI(false);
+            router.push('/(tabs)')
+          }}
         >
           <Ionicons name="chevron-back" size={20} color="#000" />
         </Pressable>
@@ -134,7 +142,34 @@ export default function RecipeAIPopup() {
   );
 
   return (
-    <SafeAreaWrapper style={{ alignItems: "flex-start" }}>
+    <MotiView
+        from={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        exit={{ opacity: 0 }}
+        transition={{
+          type: "timing",
+          duration: 200,
+          delay: 0,
+        }}
+        style={style.mainWrapper}
+      >
+        <MotiView
+          from={{
+            translateX: 300,
+          }}
+          animate={{
+            translateX: 0,
+          }}
+          exit={{
+            translateX: 300,
+          }}
+          transition={{
+            type: "timing",
+            duration: 250,
+            delay: 0,
+          }}
+          style={style.innerWrap}
+        >
       <FlashList
         data={instructions}
         renderItem={renderInstructions}
@@ -144,11 +179,40 @@ export default function RecipeAIPopup() {
         contentContainerStyle={{ paddingBottom: 24 }}
         showsVerticalScrollIndicator={false}
       />
-    </SafeAreaWrapper>
+</MotiView>
+</MotiView>
   );
 }
 
 const style = StyleSheet.create({
+  mainWrapper: {
+    zIndex: 9,
+    position: "absolute",
+    left: 0,
+    top: 0,
+    marginTop: 0,
+    width: "100%",
+    height: "100%",
+    shadowColor: "#000",
+    shadowRadius: 40,
+    shadowOffset: {
+      width: 0,
+      height: -20,
+    },
+    shadowOpacity: 0.2,
+    backgroundColor: Colors.light.background,
+  },
+  innerWrap: {
+    flex: 1,
+    marginTop: 50,
+    paddingHorizontal:20,
+    zIndex: 8,
+  },
+  innerMostWrapper: {
+    paddingLeft: 20,
+    paddingRight: 20,
+    paddingTop: 20,
+  },
   rowAmountWrap: {
     flexDirection: "row",
     alignItems: "center",

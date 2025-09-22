@@ -1,6 +1,7 @@
 import { Carrot, Lock } from "@/assets/images";
 import { SafeAreaWrapper } from "@/components/SafeAreaWrapper";
 import { ThemedText } from "@/components/themed-text";
+import { useRecipe } from "@/context/recipecontext";
 import { useStepper } from "@/context/stepper";
 import { fonts } from "@/hooks/useCacheResources";
 import { responsiveFontSize, responsiveLineHeight } from "@/utils";
@@ -78,14 +79,14 @@ function SpinningArc() {
 
 export default function Personalizing() {
  const {type}=useStepper();
+ const {setShowRecipeAI}=useRecipe();
 console.log('Personalizing type',type)
   useEffect(() => {
     const timer = setTimeout(() => {
       if(type==='question'){
         router.push("/results"); 
       } else{
-        router.push("/receipedetails"); 
-
+        setShowRecipeAI(true);
       }
      // <-- replace with your actual next screen path
     }, 10000); // 20 seconds

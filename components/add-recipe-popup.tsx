@@ -1,20 +1,23 @@
-import { CheckboxGroup } from "@/components/checkbox";
-import { RadioGroup } from "@/components/RadioGroup";
-import { ReceipeStep } from "@/components/ReceipeStep";
-import { SafeAreaWrapper } from "@/components/SafeAreaWrapper";
-import { Spacer } from "@/components/Spacer";
-import { ThemedText } from "@/components/themed-text";
+
 import { Colors } from "@/constants/theme";
+import { useRecipe } from "@/context/recipecontext";
 import { useStepper } from "@/context/stepper";
+import { globalStyles } from "@/globalstyles";
 import { fonts } from "@/hooks/useCacheResources";
 import { responsiveFontSize, responsiveLineHeight } from "@/utils";
+import { Ionicons } from "@expo/vector-icons";
+import { router } from "expo-router";
+import { MotiView } from "moti";
 import { useEffect, useState } from "react";
-import { KeyboardAvoidingView, Platform, ScrollView, StyleSheet, TextInput, View } from "react-native";
+import { KeyboardAvoidingView, Platform, Pressable, ScrollView, StyleSheet, TextInput, View } from "react-native";
+import { CheckboxGroup } from "./checkbox";
+import { RadioGroup } from "./RadioGroup";
+import { ReceipeStep } from "./ReceipeStep";
+import { Spacer } from "./Spacer";
+import { ThemedText } from "./themed-text";
 
-export default function Receipe() {
-  const { next, prev, current, total ,setType} = useStepper();
-  const [cook, setCook] = useState('');
-  const cookingCategories = [
+
+const cookingCategories = [
     { label: "Breakfast", value: "breakfast" },
     { label: "Lunch", value: "lunch" },
     { label: "Dinner", value: "dinner" },
@@ -32,7 +35,6 @@ export default function Receipe() {
     { label: "Keto", value: "keto" },
     { label: "Mediterranean", value: "mediterranean" },
   ];
-  const [dietary, setDietary] = useState('');
 
   const servingPrepare = [
     { label: "1 Servings", value: "1-serving" },
@@ -41,16 +43,13 @@ export default function Receipe() {
     { label: "4 Servings", value: "4-serving" },
     { label: "5 Servings", value: "5-serving" },
   ];
-  const [preparingServing, setPreparingServing] = useState('');
 
-  const [timeCook, setTimeCook] = useState('');
   const cookingTimes = [
     { label: "Less than 15 minutes", value: "Less than 15 minutes" },
     { label: "15-30 minutes", value: "15-30 minutes" },
     { label: "Flexible", value: "Flexible" },
   ];
 
-  const [equipKitchen, setEquipKitchen] = useState<string[]>([]);
   const kitchenEquipments = [
     { label: "Stove/Oven", value: "Stove/Oven" },
     { label: "Microwave", value: "Microwave" },
@@ -59,13 +58,71 @@ export default function Receipe() {
     { label: "Slow Cooker/Instant Pot", value: "Slow Cooker/Instant Pot" },
     { label: "Simple Kitchen Equipment Only", value: "Simple Kitchen Equipment Only" },
   ];
-  useEffect(()=>{
-    setType('receipe')
-  },[])
 
-  return (
-    <SafeAreaWrapper style={{ alignItems: 'flex-start' }}>
-      {current === 0 &&
+
+
+export default function AddRecipePopup() {
+    const {setShowAddRecipe}=useRecipe();
+    const { next, prev, current, total ,setType} = useStepper();
+    const [cook, setCook] = useState('');
+    const [dietary, setDietary] = useState('');
+    const [preparingServing, setPreparingServing] = useState('');
+    const [timeCook, setTimeCook] = useState('');
+
+    const [equipKitchen, setEquipKitchen] = useState<string[]>([]);
+
+    useEffect(()=>{
+        setType('receipe')
+      },[])
+
+    return(
+        <MotiView
+        from={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        exit={{ opacity: 0 }}
+        transition={{
+          type: "timing",
+          duration: 200,
+          delay: 0,
+        }}
+        style={styles.mainWrapper}
+      >
+        <MotiView
+          from={{
+            translateX: 300,
+          }}
+          animate={{
+            translateX: 0,
+          }}
+          exit={{
+            translateX: 300,
+          }}
+          transition={{
+            type: "timing",
+            duration: 250,
+            delay: 0,
+          }}
+          style={styles.innerWrap}
+        >
+
+{/* Header */}
+<View style={[globalStyles.row, { alignItems: "center" }]}>
+          <Pressable
+            style={globalStyles.overflowBackButton}
+            onPress={() => {
+              setShowAddRecipe(false);
+              router.push('/(tabs)')
+            }}
+          >
+            <Ionicons name="chevron-back" size={20} color="#000" />
+          </Pressable>
+          <ThemedText style={globalStyles.screenCenterHeaderTitle}>
+            Recipe AI
+          </ThemedText>
+        </View>
+{/* Header Ends*/}
+
+{current === 0 &&
         <ReceipeStep
           title={`What do you want to cook?`}
           step={current + 1}
@@ -320,42 +377,70 @@ export default function Receipe() {
         </KeyboardAvoidingView>
       }
 
-    </SafeAreaWrapper>
-  )
+        </MotiView>
+        </MotiView>
+    )
 }
 
 const styles = StyleSheet.create({
-  row: {
-    flexDirection: 'row', alignItems: 'center'
-  },
-  screenCenterHeaderTitle: {
-    flex: 1,
-    fontFamily: fonts.primary.primaryBold,
-    fontSize: responsiveFontSize(25),
-    lineHeight: responsiveLineHeight(25, 30)
-    , textAlign: 'center'
-  },
-  inputLabel: {
-    fontFamily: fonts.primary.primaryBold,
-    fontSize: responsiveFontSize(18),
-    lineHeight: responsiveLineHeight(18, 22)
-  },
-  inputFieldStyle: {
-    backgroundColor: Colors.light.inputBg,
-    padding: 17,
-    fontFamily: fonts.secondary.secondaryMedium,
-    fontSize: responsiveFontSize(16),
-    lineHeight: responsiveLineHeight(16, 22),
-    borderRadius: 40,
-  },
-  rowTargetCarb: {
-    flexDirection: 'row', alignItems: 'center', gap: 15,
-    width: '100%'
-  },
-  targetCarb: {
-    fontFamily: fonts.secondary.secondaryRegular,
-    fontSize: responsiveFontSize(16),
-    lineHeight: responsiveLineHeight(16, 20),
-    color: Colors.light.description,
-  }
-})
+    mainWrapper: {
+      zIndex: 9,
+      position: "absolute",
+      left: 0,
+      top: 0,
+      marginTop: 0,
+      width: "100%",
+      height: "100%",
+      shadowColor: "#000",
+      shadowRadius: 40,
+      shadowOffset: {
+        width: 0,
+        height: -20,
+      },
+      shadowOpacity: 0.2,
+      backgroundColor: Colors.light.background,
+    },
+    innerWrap: {
+      flex: 1,
+      marginTop: 50,
+      paddingHorizontal: 20,
+      zIndex: 8,
+    },
+    content: {
+      paddingHorizontal: 16,
+      paddingBottom: 30,
+    },
+    row: {
+        flexDirection: 'row', alignItems: 'center'
+      },
+      screenCenterHeaderTitle: {
+        flex: 1,
+        fontFamily: fonts.primary.primaryBold,
+        fontSize: responsiveFontSize(25),
+        lineHeight: responsiveLineHeight(25, 30)
+        , textAlign: 'center'
+      },
+      inputLabel: {
+        fontFamily: fonts.primary.primaryBold,
+        fontSize: responsiveFontSize(18),
+        lineHeight: responsiveLineHeight(18, 22)
+      },
+      inputFieldStyle: {
+        backgroundColor: Colors.light.inputBg,
+        padding: 17,
+        fontFamily: fonts.secondary.secondaryMedium,
+        fontSize: responsiveFontSize(16),
+        lineHeight: responsiveLineHeight(16, 22),
+        borderRadius: 40,
+      },
+      rowTargetCarb: {
+        flexDirection: 'row', alignItems: 'center', gap: 15,
+        width: '100%'
+      },
+      targetCarb: {
+        fontFamily: fonts.secondary.secondaryRegular,
+        fontSize: responsiveFontSize(16),
+        lineHeight: responsiveLineHeight(16, 20),
+        color: Colors.light.description,
+      }
+});

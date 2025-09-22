@@ -1,5 +1,6 @@
 // app/diet-ai-screen.tsx
 import { Carrot, Crown } from "@/assets/images";
+import QuickAddSheet from "@/components/quick-add-sheet";
 import { Spacer } from "@/components/Spacer";
 import { ThemedText } from "@/components/themed-text";
 import { fonts } from "@/hooks/useCacheResources";
@@ -9,6 +10,7 @@ import { FlashList } from "@shopify/flash-list";
 
 import { Image } from "expo-image";
 import { LinearGradient } from "expo-linear-gradient";
+import { router } from "expo-router";
 import React, { Fragment, useEffect, useState } from "react";
 import {
   Dimensions,
@@ -120,7 +122,7 @@ const dished:any=[
 },
 ];
 
-const ListHeader=()=>{
+const ListHeader=({setShowQuickAdd})=>{
   return(
 <Fragment>
   <View style={s.body}>
@@ -139,7 +141,7 @@ const ListHeader=()=>{
    </Text>
  </View>
 
- <Pressable style={s.iconBtn}>
+ <Pressable onPress={()=>setShowQuickAdd(true)} style={s.iconBtn}>
  <Feather name="edit" size={20} color="black" />
  </Pressable>
 </View>
@@ -239,6 +241,7 @@ const renderRecentLogged=({item}:any)=>{
 export default function DietAIScreen() {
   
   const [loggedDish,setLoggedDish]=useState<any>([]);
+  const [showQuickAdd, setShowQuickAdd] = useState(false);
 
   useEffect(()=>{
     setTimeout(() => {
@@ -298,9 +301,7 @@ export default function DietAIScreen() {
       </LinearGradient>
            {/* Header gradient ends */}
 
-      {/* Body */}
-
-        {/* Calories Card */}
+  
   
    
         
@@ -308,9 +309,27 @@ export default function DietAIScreen() {
         data={loggedDish}
         ListEmptyComponent={NoFoodData}
         renderItem={renderRecentLogged}
-        ListHeaderComponent={ListHeader}
+        ListHeaderComponent={<ListHeader setShowQuickAdd={setShowQuickAdd} />}
         />
   
+
+  <QuickAddSheet
+  backdropOpacity={0.6}
+        visible={showQuickAdd}
+        onClose={() => setShowQuickAdd(false)}
+        onFoodDB={() => {
+          setShowQuickAdd(false);
+          router.push('/fooddatabase')
+          // navigate to your food DB screen
+          // router.push('/food-database');
+        }}
+        onScanFood={() => {
+          setShowQuickAdd(false);
+          // open camera / scanner
+          // router.push('/scan-food');
+        }}
+        tabHeight={86} // same as your Tabs tabBarStyle.height
+      />
 
       {/* Bottom Tab Bar + FAB */}
       

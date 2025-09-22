@@ -2,6 +2,7 @@ import { Tabs } from 'expo-router';
 import React from 'react';
 
 import { CarrotOutlined, DocRec, Spoon } from '@/assets/images';
+import DietAIPopup from '@/components/diet-ai-popup';
 import { HapticTab } from '@/components/haptic-tab';
 import RecipeAIPopup from '@/components/recipe-ai-popup';
 import { Colors } from '@/constants/theme';
@@ -20,6 +21,10 @@ import { Platform, Pressable, StyleSheet, View } from 'react-native';
 export default function TabLayout() {
   const colorScheme = useColorScheme();
 const { showRecipeAI,
+  showAddRecipe,
+  showDietRecipe,
+  setShowDietRecipe,
+  setShowAddRecipe,
   setShowRecipeAI}=useRecipe();
 
   console.log('showRecipeAI:',showRecipeAI);
@@ -35,7 +40,7 @@ const { showRecipeAI,
           onPress={() => {
             // don’t navigate to /add, just open your popup
             console.log('onPress')
-            setShowRecipeAI(true);
+            setShowAddRecipe(true);
           }}
           style={({ pressed }) => [
             styles.roundedPlusInnerView,
@@ -50,7 +55,8 @@ const { showRecipeAI,
 
   return (
     <>
- {showRecipeAI&&<RecipeAIPopup />}
+ {!!showRecipeAI&&<RecipeAIPopup />}
+ {!!showDietRecipe&&<DietAIPopup />}
     <Tabs
       screenOptions={{
         tabBarActiveTintColor: Colors[colorScheme ?? 'light'].tint,
@@ -71,7 +77,10 @@ const { showRecipeAI,
           console.log('screenListeners e',e);
           const parts = e.target.split("-")[0];
           if (parts === "add") {
-            setShowRecipeAI(true);
+            setShowAddRecipe(true);
+          }
+          else if(parts===''){
+
           }
           // e.preventDefault();
           // open your modal here if you didn't in PlusTabButton onPress
@@ -132,13 +141,19 @@ const { showRecipeAI,
   />
 
       <Tabs.Screen
-        name="explore"
+        name="recipe-ai"
         options={{
           title: 'Receipe AI',
           tabBarIcon: ({ color }) => <Image source={Spoon} style={[styles.tabImageStyle,{
             tintColor:color,
           }]}  />,
         }}
+         listeners={{
+      tabPress: (e) => {
+        e.preventDefault();
+        setShowRecipeAI(true);
+      },
+    }}
       />
 
 
@@ -191,18 +206,18 @@ const styles=StyleSheet.create({
     justifyContent: "center",
 
   },
-  roundedPlusInnerView:{
-    width: 56,
-    height: 56,
-    borderRadius: 28,
-    backgroundColor: "#000",
-    alignItems: "center",
-    justifyContent: "center",
-    // soft shadow
-    shadowColor: "#000",
-    shadowOpacity: 0.25,
-    shadowRadius: 8,
-    shadowOffset: { width: 0, height: 4 },
-    elevation: 6,
-  }
+  // roundedPlusInnerView:{
+  //   width: 56,
+  //   height: 56,
+  //   borderRadius: 28,
+  //   backgroundColor: "#000",
+  //   alignItems: "center",
+  //   justifyContent: "center",
+  //   // soft shadow
+  //   shadowColor: "#000",
+  //   shadowOpacity: 0.25,
+  //   shadowRadius: 8,
+  //   shadowOffset: { width: 0, height: 4 },
+  //   elevation: 6,
+  // }
 })

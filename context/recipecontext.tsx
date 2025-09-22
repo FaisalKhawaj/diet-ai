@@ -99,6 +99,10 @@ import { useStepper } from "./stepper";
     submit: () => void; // call on last step "Finish"
     showRecipeAI: boolean;                                   // ✅ type it
     setShowRecipeAI: React.Dispatch<React.SetStateAction<boolean>>;
+    showAddRecipe:boolean;
+    setShowAddRecipe: React.Dispatch<React.SetStateAction<boolean>>
+    showDietRecipe:boolean;
+    setShowDietRecipe:React.Dispatch<React.SetStateAction<boolean>>
   };
   
   const Ctx = createContext<CtxType | null>(null);
@@ -108,6 +112,8 @@ import { useStepper } from "./stepper";
    
     const { current, setCanNext, total, setTotal } = useStepper();
     const [showRecipeAI,setShowRecipeAI]=useState(false);
+    const [showAddRecipe,setShowAddRecipe]=useState(false);
+    const [showDietRecipe,setShowDietRecipe]=useState(false);
     // Ensure the stepper knows this flow has 7 steps
     useEffect(() => {
       if (total !== 7) setTotal(7);
@@ -197,9 +203,14 @@ import { useStepper } from "./stepper";
         resetRecipe,
         submit,
         showRecipeAI,
-        setShowRecipeAI
+        setShowRecipeAI,
+        showAddRecipe,
+        setShowAddRecipe,
+        showDietRecipe,
+        setShowDietRecipe,
+
       }),
-      [qa,showRecipeAI]
+      [qa,showRecipeAI,showAddRecipe,showDietRecipe]
     );
   
     return <Ctx.Provider value={value}>{children}</Ctx.Provider>;
