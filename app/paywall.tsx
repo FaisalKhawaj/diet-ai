@@ -8,6 +8,7 @@ import { fonts } from "@/hooks/useCacheResources";
 import { responsiveFontSize, responsiveLineHeight } from "@/utils";
 import { Ionicons } from "@expo/vector-icons";
 import { LinearGradient } from "expo-linear-gradient";
+import { router } from "expo-router";
 import React, { useState } from "react";
 
 import {
@@ -40,6 +41,7 @@ export default function Paywall() {
     const onContinue = () => {
         // TODO: handle purchase flow for `selected`
         console.log("Buy:", selected);
+        router.push('/(tabs)')
     };
 
     const FEATURES = [

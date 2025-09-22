@@ -54,7 +54,7 @@ export const HeightRulerPicker: React.FC<Props> = ({
   onChange,
   onChangeEnd,
   accent = "#D9FF48",
-  decelerationRate = Platform.select({ ios: "normal", android: 0.985 }) as any,
+  decelerationRate = Platform.select({ ios: "normal", android:'fast'}) as any,
 }) => {
   const scrollRef = useRef<ScrollView>(null);
   const [rulerH, setRulerH] = useState(0);
