@@ -27,7 +27,7 @@ export default function SettingsModal() {
 
 <Spacer marginTop={36} />
 
-<ThemedText>Basic</ThemedText>
+<ThemedText style={{}}>Basic</ThemedText>
 </View>
     </View>
     )
