@@ -122,7 +122,7 @@ const dished:any=[
 },
 ];
 
-const ListHeader=({setShowQuickAdd})=>{
+const ListHeader=({setShowQuickAdd}:any)=>{
   return(
 <Fragment>
   <View style={s.body}>
@@ -183,7 +183,7 @@ const ListHeader=({setShowQuickAdd})=>{
 
 const renderRecentLogged=({item}:any)=>{
   return(
-    <Pressable style={s.recentLoggedMainWrapper}>
+    <Pressable onPress={()=>router.push('/added-food-details')} style={s.recentLoggedMainWrapper}>
     {/* Image view */}
     <View style={s.recentLoggedDishImgView}>
       <Image source={{uri:'https://picsum.photos/200'}}
@@ -325,6 +325,7 @@ export default function DietAIScreen() {
         }}
         onScanFood={() => {
           setShowQuickAdd(false);
+          router.push('/scan-food')
           // open camera / scanner
           // router.push('/scan-food');
         }}

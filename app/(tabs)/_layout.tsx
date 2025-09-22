@@ -1,4 +1,4 @@
-import { Tabs } from 'expo-router';
+import { router, Tabs } from 'expo-router';
 import React from 'react';
 
 import { CarrotOutlined, DocRec, Spoon } from '@/assets/images';
@@ -27,8 +27,8 @@ const { showRecipeAI,
   setShowAddRecipe,
   setShowRecipeAI}=useRecipe();
 
-  console.log('showRecipeAI:',showRecipeAI);
-
+  console.log('showRecipeAI>:',showRecipeAI);
+console.log('showDietRecipe',showDietRecipe)
   const PlusTabButton = (props: any) => {
     // forward props so RN/React Navigation can manage focus/aria etc.
     const { onPress, ...rest } = props;
@@ -131,13 +131,7 @@ const { showRecipeAI,
       tabBarButton: () => <PlusTabButton />,
     }}
     
-    // Optional: prevent navigation and only run your modal logic
-    // listeners={{
-    //   tabPress: (e) => {
-    //     e.preventDefault();
-    //     setShowRecipeAI(true);
-    //   },
-    // }}
+   
   />
 
       <Tabs.Screen
@@ -159,10 +153,21 @@ const { showRecipeAI,
 
 <Tabs.Screen
         name="settings"
+        
         options={{
           title: 'Settings',
+          
           headerShown:false,
           tabBarIcon: ({ color }) =><Ionicons name="settings-outline" size={24} color={color} />
+        }}
+        listeners={{
+          tabPress: (e) => {
+            e.preventDefault();                  // don't navigate to the tab file
+            setShowRecipeAI(false);
+            setShowDietRecipe(false);
+            setShowAddRecipe(false);
+            router.push("/(modals)/settings");   // open your formSheet modal
+          },
         }}
       />
     </Tabs>
