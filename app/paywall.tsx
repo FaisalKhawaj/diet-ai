@@ -1,5 +1,5 @@
 // app/screens/Paywall.tsx
-import { Camera, CupDietAi, DocRec, Speed } from "@/assets/images";
+import { Camera, CupDietAi, DocRec, Img3, Img5, Speed } from "@/assets/images";
 import { Spacer } from "@/components/Spacer";
 import StepIndicator from "@/components/StepIndicator";
 import { ThemedText } from "@/components/themed-text";
@@ -24,9 +24,6 @@ import {
 import { SafeAreaView } from "react-native-safe-area-context";
 
 // --- replace with your real images ---
-const HERO_1 = { uri: "https://images.unsplash.com/photo-1512621776951-a57141f2eefd?q=80&w=1000" };
-const HERO_2 = { uri: "https://picsum.photos/200" };
-const HERO_3 = { uri: "https://picsum.photos/209" };
 
 const DOT = 40;           // slightly larger to match the mock
 const SPINE = 4;
@@ -43,20 +40,6 @@ export default function Paywall() {
         console.log("Buy:", selected);
         router.push('/(tabs)')
     };
-
-    const FEATURES = [
-        { icon: "bag-handle",img:CupDietAi, title: "Diet AI", subtitle: "Personalized daily meal plans every week" },
-        { icon: "book",     title: "Recipe AI", subtitle: "Generated Unlimited personalized Food Recipes" },
-        { icon: "bar-chart", title: "Calorie Tracker", subtitle: "Follow up your calories, proteins, carbs and fats" },
-        { icon: "camera",   title: "Food Scanner", subtitle: "Snap a photo of any food to get calories" },
-      ];
-
-   
-
-
-     
-
-
 
       const items = [
         { icon: "bag-handle", img:CupDietAi, title: "Diet AI",        subtitle: "Personalized daily meal plans every week" },
@@ -79,10 +62,10 @@ export default function Paywall() {
     end={{ x: 0.5, y: 1 }}     // bottom center
     style={StyleSheet.absoluteFill}
   />
-                    <Image source={HERO_1 as ImageSourcePropType} style={[styles.heroImg, styles.imgA]} />
-                    <Image source={HERO_2 as ImageSourcePropType} style={[styles.heroImg, styles.imgB]} />
-                    <Image source={HERO_3 as ImageSourcePropType} style={[styles.heroImg, styles.imgC]} />
-                    <Image source={HERO_3 as ImageSourcePropType} style={[styles.heroImg, styles.imgD]} />
+                    <Image source={Img3 as ImageSourcePropType} style={[styles.heroImg, styles.imgA]} />
+                    <Image source={Img3 as ImageSourcePropType} style={[styles.heroImg, styles.imgB]} />
+                    <Image source={Img5 as ImageSourcePropType} style={[styles.heroImg, styles.imgC]} />
+                    <Image source={Img3 as ImageSourcePropType} style={[styles.heroImg, styles.imgD]} />
 
 
 

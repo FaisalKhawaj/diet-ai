@@ -10,7 +10,11 @@
     "newArchEnabled": true,
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.laytcoll.diet-ai"
+      "bundleIdentifier": "com.laytcoll.diet-ai",
+      "infoPlist": {
+        "NSCameraUsageDescription": "We use the camera to scan food and barcodes.",
+        "NSMicrophoneUsageDescription": "Microphone access is needed for video capture features."
+      }
     },
     "android": {
       "adaptiveIcon": {

@@ -55,7 +55,9 @@ function SpinningArc() {
         />
       </Svg>
 
-      <Animated.View style={[StyleSheet.absoluteFill, { transform: [{ rotate: spin }] }]}>
+      <Animated.View
+        style={[StyleSheet.absoluteFill, { transform: [{ rotate: spin }] }]}
+      >
         <Svg width={SIZE} height={SIZE}>
           <Circle
             cx={SIZE / 2}
@@ -71,26 +73,32 @@ function SpinningArc() {
       </Animated.View>
 
       <View style={styles.carrotWrap}>
-        <Image source={Carrot} contentFit="contain" style={{ width: 71, height: 71 }} />
+        <Image
+          source={Carrot}
+          contentFit="contain"
+          style={{ width: 71, height: 71 }}
+        />
       </View>
     </View>
   );
 }
 
 export default function Personalizing() {
- const {type}=useStepper();
- const {setShowRecipeAI}=useRecipe();
-console.log('Personalizing type',type)
+  const { type } = useStepper();
+  const { setShowRecipeAI, setShowAddRecipe } = useRecipe();
+  console.log("Personalizing type", type);
   useEffect(() => {
     const timer = setTimeout(() => {
-      if(type==='question'){
-        router.push("/results"); 
-      } else{
+      if (type === "question") {
+        router.push("/results");
+      } else {
+        router.push('/(tabs)')
         setShowRecipeAI(true);
       }
-     // <-- replace with your actual next screen path
+      // <-- replace with your actual next screen path
     }, 10000); // 20 seconds
 
+    setShowAddRecipe(false);
     return () => clearTimeout(timer); // cleanup when unmounting
   }, []);
 
@@ -102,7 +110,7 @@ console.log('Personalizing type',type)
         </View>
 
         <ThemedText style={styles.title}>
-          {type === 'question' ?`Personalizing…` : `Generating...`}
+          {type === "question" ? `Personalizing…` : `Generating...`}
         </ThemedText>
 
         <View style={styles.bottom}>
@@ -110,8 +118,8 @@ console.log('Personalizing type',type)
             <Image source={Lock} style={{ width: 30, height: 30 }} />
           </View>
           <Text style={styles.disclaimer}>
-            Your Data is secure and is private and will never get shared. This will be only used to
-            calculate macros and planning your diet.
+            Your Data is secure and is private and will never get shared. This
+            will be only used to calculate macros and planning your diet.
           </Text>
         </View>
       </View>

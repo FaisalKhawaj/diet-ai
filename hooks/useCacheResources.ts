@@ -7,15 +7,17 @@ export const fontAssets = [
     primaryBold: require("../assets/fonts/BricolageGrotesque-Bold.ttf"),
   },
   {
-    primaryCondensedMedium: require("../assets/fonts/BricolageGrotesque_36pt_SemiCondensed-Medium.ttf"),
+    primaryRegular: require("../assets/fonts/BricolageGrotesque-Regular.ttf"),
   },
   {
-    primaryMedium: require("../assets/fonts/BricolageGrotesque_36pt_Condensed-Medium.ttf"),
+    primaryMedium: require("../assets/fonts/BricolageGrotesque-Medium.ttf"),
+  },
+    {
+    primaryLight: require("../assets/fonts/BricolageGrotesque-Light.ttf"),
   },
   {
     primarySemiBold: require("../assets/fonts/BricolageGrotesque-SemiBold.ttf"),
   },
-
   {
     secondaryBold: require("../assets/fonts/Inter-Bold.otf"),
   },
@@ -33,8 +35,9 @@ export const fontAssets = [
 export const fonts = {
   primary: {
     primaryBold: "primaryBold",
-    primaryCondensedMedium: "primaryCondensedMedium",
     primaryMedium: "primaryMedium",
+    primaryLight:"primaryLight",
+    primaryRegular:"primaryRegular",
     primarySemiBold: "primarySemiBold",
   },
   secondary: {

@@ -14,7 +14,13 @@ import { WeightChart } from "@/components/weightchart";
 import { Colors } from "@/constants/theme";
 import { useStepper } from "@/context/stepper";
 import { cmToFt, cmToIn, ftToCm, inToCm, Unit } from "@/helpers/measurement";
-import { kgToLbs, kgToOz, lbsToKg, ozToKg, WeightUnit } from "@/helpers/weightunits";
+import {
+  kgToLbs,
+  kgToOz,
+  lbsToKg,
+  ozToKg,
+  WeightUnit,
+} from "@/helpers/weightunits";
 import { fonts } from "@/hooks/useCacheResources";
 import { responsiveFontSize, responsiveLineHeight } from "@/utils";
 import { useEffect, useMemo, useState } from "react";
@@ -22,20 +28,25 @@ import { Dimensions, StyleSheet, View } from "react-native";
 
 type Gender = "male" | "female" | "other";
 
-
-
 const activityOptions = [
-  { id: "not_active", title: "Not Very Active", subtitle: "Little to no exercise" },
+  {
+    id: "not_active",
+    title: "Not Very Active",
+    subtitle: "Little to no exercise",
+  },
   { id: "light", title: "Light Active", subtitle: "A few workouts per month" },
-  { id: "moderate", title: "Moderately Active", subtitle: "0-2 workouts per week" },
+  {
+    id: "moderate",
+    title: "Moderately Active",
+    subtitle: "0-2 workouts per week",
+  },
   { id: "very", title: "Very Active", subtitle: "2-4 workouts per week" },
   { id: "extra", title: "Extra Active", subtitle: "5+ workouts per week" },
 ];
 
 // Values are normalized 0..1 (top=1). These produce the same “crossing” look.
-const normalDiet = [0.72, 0.60, 0.45, 0.35, 0.40, 0.55, 0.75, 0.95];
+const normalDiet = [0.72, 0.6, 0.45, 0.35, 0.4, 0.55, 0.75, 0.95];
 const calAI = [0.85, 0.75, 0.55, 0.35, 0.18, 0.08, 0.03, 0.02];
-
 
 const EPS = 1e-6;
 const asNum = (v: any, fallback: number) =>
@@ -43,38 +54,53 @@ const asNum = (v: any, fallback: number) =>
 
 export default function Questions() {
   const [gender, setGender] = useState<Gender | null>("male");
-  const [goal, setGoal] = useState('');
-  const { next, prev, goTo, reset,type, total, setTotal, current, answers,isLast, setAnswer, canNext, setCanNext ,setType} = useStepper();
+  const [goal, setGoal] = useState("");
+  const {
+    next,
+    prev,
+    goTo,
+    reset,
+    type,
+    total,
+    setTotal,
+    current,
+    answers,
+    isLast,
+    setAnswer,
+    canNext,
+    setCanNext,
+    setType,
+  } = useStepper();
   const [age, setAge] = useState(30);
   const [unit, setUnit] = useState<Unit>("cm");
-  const [weight, setWeight] = useState<any>('kg');
+  const [weight, setWeight] = useState<any>("kg");
   // const [cmValue, setCmValue] = useState<any>('');
   const [cmValue, setCmValue] = useState<number>(120);
 
   const [weightUnit, setWeightUnit] = useState<WeightUnit>("kg");
-  const [kgValue, setKgValue] = useState<number>(70);           // canonical weight
+  const [kgValue, setKgValue] = useState<number>(70); // canonical weight
   const [weightDisplay, setWeightDisplay] = useState<string>("");
-const [preferredDiet,setPreferredDiet]=useState('');
-const preferDiets=[
-  { label: "Standard", value: "standard" },
-  { label: "Vegeterian", value: "vegeterian" },
-  { label: "Vegan", value: "vegan" },
-  { label: "Keto", value: "keto" },
-  { label: "Mediterranean", value: "mediterranean" },
-]
-console.log('type',type)
+  const [preferredDiet, setPreferredDiet] = useState("");
+  const preferDiets = [
+    { label: "Standard", value: "standard" },
+    { label: "Vegeterian", value: "vegeterian" },
+    { label: "Vegan", value: "vegan" },
+    { label: "Keto", value: "keto" },
+    { label: "Mediterranean", value: "mediterranean" },
+  ];
+  console.log("type", type);
   const config = useMemo(() => {
     const baseCm = asNum(cmValue, 120); // always a valid cm
 
     switch (unit) {
       case "ft":
-        const initial = cmToFt(baseCm);            // 3.94…
+        const initial = cmToFt(baseCm); // 3.94…
 
         return {
           min: 3.0,
           max: 8.0,
           initial,
-          step: 1 / 12,             // ✅ one inch per step (NOT 0.01)
+          step: 1 / 12, // ✅ one inch per step (NOT 0.01)
           formatter: (v: number) => {
             const totalInches = Math.round((v + EPS) * 12);
             const feet = Math.floor(totalInches / 12);
@@ -97,7 +123,7 @@ console.log('type',type)
         return {
           min: 120,
           max: 220,
-          initial: Math.round(baseCm),              // make sure it’s an int cm
+          initial: Math.round(baseCm), // make sure it’s an int cm
           step: 1,
           formatter: (v: number) => `${v} cm`,
           toCm: (v: number) => v,
@@ -105,9 +131,9 @@ console.log('type',type)
     }
   }, [unit, cmValue]);
 
-
   const weightCfg = useMemo(() => {
-    const minKg = 30, maxKg = 200;
+    const minKg = 30,
+      maxKg = 200;
 
     switch (weightUnit) {
       case "lbs": {
@@ -121,8 +147,8 @@ console.log('type',type)
           fromKg: (kg: number) => kgToLbs(kg),
           toKg: (v: number) => lbsToKg(v),
           fmt: (v: number) => `${Math.round(v)} lb`,
-          majorEverySteps: 10,  // every 10 lb
-          midEverySteps: 5,   // every 5 lb
+          majorEverySteps: 10, // every 10 lb
+          midEverySteps: 5, // every 5 lb
         };
       }
       case "ounce": {
@@ -136,8 +162,8 @@ console.log('type',type)
           fromKg: (kg: number) => kgToOz(kg),
           toKg: (v: number) => ozToKg(v),
           fmt: (v: number) => `${Math.round(v)} oz`,
-          majorEverySteps: 16,  // every 16 oz (1 lb)
-          midEverySteps: 8,   // every 8 oz (half lb)
+          majorEverySteps: 16, // every 16 oz (1 lb)
+          midEverySteps: 8, // every 8 oz (half lb)
         };
       }
       case "grams": {
@@ -151,8 +177,8 @@ console.log('type',type)
           fromKg: (kg: number) => kg * 1000,
           toKg: (v: number) => v / 1000,
           fmt: (v: number) => `${Math.round(v)} g`,
-          majorEverySteps: 10,  // 10*100g = 1000g
-          midEverySteps: 5,   // 5*100g  = 500g
+          majorEverySteps: 10, // 10*100g = 1000g
+          midEverySteps: 5, // 5*100g  = 500g
         };
       }
       case "kg":
@@ -167,12 +193,12 @@ console.log('type',type)
           fromKg: (kg: number) => kg,
           toKg: (v: number) => v,
           fmt: (v: number) => `${v.toFixed(1)} kg`,
-          majorEverySteps: 20,  // 20*0.5 = 10 kg
-          midEverySteps: 10,  // 10*0.5 = 5 kg
+          majorEverySteps: 20, // 20*0.5 = 10 kg
+          midEverySteps: 10, // 10*0.5 = 5 kg
         };
       }
     }
-  }, [weightUnit])
+  }, [weightUnit]);
 
   const handleChange = (pickerValue: number) => {
     const cm = Math.round(config.toCm(pickerValue));
@@ -181,31 +207,33 @@ console.log('type',type)
   };
   const [display, setDisplay] = useState<any>(null);
 
-  useEffect(()=>{
-    setType('question')
-  },[])
+  useEffect(() => {
+    setType("question");
+    setTotal(12);
+  }, [setType, setTotal]);
 
-  console.log('current', current)
+  console.log("current", current);
   const genderOptions: RadioOption<Gender>[] = [
     { label: "Male", value: "male" },
     { label: "Female", value: "female" },
     { label: "Other", value: "other" },
   ];
 
-  const [targetTimeGoal, setTargetTimeGoal] = useState<"1w" | "3m" | "6m">("1w");
-
+  const [targetTimeGoal, setTargetTimeGoal] = useState<"1w" | "3m" | "6m">(
+    "1w"
+  );
 
   const goals = [
     { label: "Lose Weight", value: "lose_weight" },
     { label: "Gain Weight", value: "gain_weight" },
     { label: "Maintain", value: "maintain" },
-  ]
+  ];
 
   useEffect(() => setTotal(12), [setTotal]);
 
   return (
-    <SafeAreaWrapper style={{ alignItems: 'flex-start' }}>
-      {current === 0 &&
+    <SafeAreaWrapper style={{ alignItems: "flex-start" }}>
+      {current === 0 && (
         <QuestionStep
           title="What is your Gender?"
           description="We ask to personalize your calorie and health insights"
@@ -227,9 +255,9 @@ console.log('type',type)
             itemHeight={66}
           />
         </QuestionStep>
-      }
+      )}
 
-      {current === 1 &&
+      {current === 1 && (
         <QuestionStep
           title="What is your Age?"
           description="Your age helps us tailor calorie goals to your needs"
@@ -252,17 +280,19 @@ console.log('type',type)
               sliderHeight={8}
               thumbSize={22}
             />
-            <ThemedText style={{
-              fontSize: responsiveFontSize(18),
-              fontFamily: fonts.primary.primaryBold,
-            }}>
+            <ThemedText
+              style={{
+                fontSize: responsiveFontSize(18),
+                fontFamily: fonts.primary.primaryBold,
+              }}
+            >
               {age}
             </ThemedText>
           </View>
         </QuestionStep>
-      }
+      )}
 
-      {current === 2 &&
+      {current === 2 && (
         <QuestionStep
           title={`What is your Activity Level?`}
           description={`Choose your daily activity level to set accurate calorie goals.`}
@@ -279,10 +309,11 @@ console.log('type',type)
             selectedId={answers[current]}
             onSelect={(id) => setAnswer(current, id)}
           />
+          <Spacer marginTop={10} />
         </QuestionStep>
-      }
+      )}
 
-      {current === 3 &&
+      {current === 3 && (
         <QuestionStep
           title={`Cal AI gives you long term Results`}
           step={current + 1}
@@ -293,24 +324,25 @@ console.log('type',type)
           }}
           onBack={prev}
         >
-          <View style={{alignSelf:'center'}}>
-          <WeightChart
-            style={{ width: 340 }}   // outer card width
-            width={320}              // drawing area width
-            height={180}
-            normalDiet={normalDiet}
-            calAI={calAI}
-          />
+          <View style={{ alignSelf: "center" }}>
+            <WeightChart
+              style={{ width: 340 }} // outer card width
+              width={320} // drawing area width
+              height={180}
+              normalDiet={normalDiet}
+              calAI={calAI}
+            />
           </View>
-        
+
           <Spacer marginTop={30} />
           <ThemedText style={styles.weightLossDescription}>
-            70% of Cat AI Users keep maintaining the weight loss even after a year
+            70% of Cat AI Users keep maintaining the weight loss even after a
+            year
           </ThemedText>
         </QuestionStep>
-      }
+      )}
 
-      {current === 4 &&
+      {current === 4 && (
         <QuestionStep
           title={`What is your Current Height?`}
           step={current + 1}
@@ -327,14 +359,13 @@ console.log('type',type)
               { id: "ft", label: "Foot" },
               { id: "in", label: "Inches" },
             ]}
-            style={{ justifyContent: 'center' }}
+            style={{ justifyContent: "center" }}
             value={unit}
             onChange={(id) => setUnit(id as Unit)}
           />
 
           <HeightRulerPicker
             key={`${unit}-${config.min}-${config.max}-${config.step}-${config.initial}`}
-
             min={config.min}
             max={config.max}
             initial={config.initial}
@@ -345,11 +376,10 @@ console.log('type',type)
             onChangeEnd={(v) => setCmValue(Math.round(config.toCm(v)))}
             accent="#D9FF48"
           />
-
         </QuestionStep>
-      }
+      )}
 
-      {current === 5 &&
+      {current === 5 && (
         <QuestionStep
           title={`What is your Current Weight?`}
           step={current + 1}
@@ -367,11 +397,11 @@ console.log('type',type)
               { id: "lbs", label: "LBS" },
               { id: "kg", label: "KG" },
             ]}
-            style={{ justifyContent: 'center' }}
+            style={{ justifyContent: "center" }}
             value={weightUnit}
             onChange={(id) => setWeightUnit(id as WeightUnit)}
           />
-          <View style={{ justifyContent: 'center', flex: 1 }}>
+          <View style={{ justifyContent: "center", flex: 1 }}>
             <RulerPicker
               key={`${weightUnit}-${weightCfg.min}-${weightCfg.max}-${weightCfg.step}`} // force correct remount per unit
               width={Dimensions.get("window").width - 48}
@@ -386,7 +416,9 @@ console.log('type',type)
               indicatorColor="black"
               valueTextStyle={{ fontSize: 28, fontWeight: "800" }}
               unitTextStyle={{ fontSize: 20 }}
-              onValueChange={(val) => setWeightDisplay(`${val} ${weightCfg.unit}`)}
+              onValueChange={(val) =>
+                setWeightDisplay(`${val} ${weightCfg.unit}`)
+              }
               onValueChangeEnd={(val) => {
                 const num = parseFloat(val);
                 // round to the unit’s resolution when storing back to kg
@@ -397,15 +429,12 @@ console.log('type',type)
               midEverySteps={weightCfg.midEverySteps}
             />
           </View>
-
-
         </QuestionStep>
-      }
+      )}
 
-
-      {current === 6 &&
+      {current === 6 && (
         <QuestionStep
-          title={`What is your Goal?`}
+          title={`What is your Goal ? `}
           description={`Choose what you want to achieve`}
           step={current + 1}
           totalSteps={total}
@@ -425,9 +454,9 @@ console.log('type',type)
             itemHeight={66}
           />
         </QuestionStep>
-      }
+      )}
 
-{current === 7 &&
+      {current === 7 && (
         <QuestionStep
           title={`Your target Weight`}
           description={`Tell us your goal weight to personalize your plan`}
@@ -439,7 +468,7 @@ console.log('type',type)
           }}
           onBack={prev}
         >
-          <View style={{ justifyContent: 'center', flex: 1 }}>
+          <View style={{ justifyContent: "center", flex: 1 }}>
             <RulerPicker
               key={`${weightUnit}-${weightCfg.min}-${weightCfg.max}-${weightCfg.step}`} // force correct remount per unit
               width={Dimensions.get("window").width - 48}
@@ -454,7 +483,9 @@ console.log('type',type)
               indicatorColor="black"
               valueTextStyle={{ fontSize: 28, fontWeight: "800" }}
               unitTextStyle={{ fontSize: 20 }}
-              onValueChange={(val) => setWeightDisplay(`${val} ${weightCfg.unit}`)}
+              onValueChange={(val) =>
+                setWeightDisplay(`${val} ${weightCfg.unit}`)
+              }
               onValueChangeEnd={(val) => {
                 const num = parseFloat(val);
                 // round to the unit’s resolution when storing back to kg
@@ -465,15 +496,27 @@ console.log('type',type)
               midEverySteps={weightCfg.midEverySteps}
             />
           </View>
-          </QuestionStep>
-          }
+        </QuestionStep>
+      )}
 
-{current === 8 &&
+      {current === 8 && (
         <QuestionStep
-        renderTitle={()=><ThemedText style={styles.wrapperTitleStyle}>A <ThemedText style={[styles.wrapperTitleStyle,{
-          color:'#FDC565'
-        }]}>2KG </ThemedText>gain is a steady,acheivable milestone </ThemedText>}
-
+          renderTitle={() => (
+            <ThemedText style={styles.wrapperTitleStyle}>
+              A{" "}
+              <ThemedText
+                style={[
+                  styles.wrapperTitleStyle,
+                  {
+                    color: "#FDC565",
+                  },
+                ]}
+              >
+                2KG{" "}
+              </ThemedText>
+              gain is a steady,acheivable milestone{" "}
+            </ThemedText>
+          )}
           description={`89% of Cal AI users says that the results they got are inevitable. We believe you can do it too.`}
           step={current + 1}
           totalSteps={total}
@@ -484,14 +527,12 @@ console.log('type',type)
           onBack={prev}
         >
           <ThemedText></ThemedText>
-          </QuestionStep>}
+        </QuestionStep>
+      )}
 
-
-          {current === 9 &&
+      {current === 9 && (
         <QuestionStep
-        title={`Target time for your Goal`}
-       
-
+          title={`Target time for your Goal`}
           description={`Set how quickly you’d like to reach your goal.`}
           step={current + 1}
           totalSteps={total}
@@ -501,19 +542,19 @@ console.log('type',type)
           }}
           onBack={prev}
         >
-        <IntervalSlider
-  value={targetTimeGoal}                 // or omit "value" and use defaultValue
-  onChange={setTargetTimeGoal}
-  activeColor="#D9FF48"
-  trackColor="#E5E5E5"
-  style={{ paddingHorizontal: 16 }}
-/>
+          <IntervalSlider
+            value={targetTimeGoal} // or omit "value" and use defaultValue
+            onChange={setTargetTimeGoal}
+            activeColor="#D9FF48"
+            trackColor="#E5E5E5"
+            style={{ paddingHorizontal: 16 }}
+          />
+        </QuestionStep>
+      )}
 
-          </QuestionStep>}
-
-          {current === 10 &&
+      {current === 10 && (
         <QuestionStep
-        title={`Twice more likely`}
+          title={`Twice more likely`}
           step={current + 1}
           totalSteps={total}
           onContinue={() => {
@@ -523,18 +564,20 @@ console.log('type',type)
           onBack={prev}
         >
           <ComparisonMiniChart
-          leftLabel={`without\nDiet AI`}
-          leftValueText="20%" rightValueText="2x" />
+            leftLabel={`without\nDiet AI`}
+            leftValueText="20%"
+            rightValueText="2x"
+          />
           <Spacer marginTop={40} />
-<ThemedText style={styles.description}>
-Diet AI helps you achieve results faster, better, and longer lasting
-</ThemedText>
-          </QuestionStep>
-}
+          <ThemedText style={styles.description}>
+            Diet AI helps you achieve results faster, better, and longer lasting
+          </ThemedText>
+        </QuestionStep>
+      )}
 
-{current === 11 &&
+      {current === 11 && (
         <QuestionStep
-        title={`Do you have a preferred diet Type?`}
+          title={`Do you have a preferred diet Type?`}
           step={current + 1}
           totalSteps={total}
           onContinue={() => {
@@ -543,7 +586,7 @@ Diet AI helps you achieve results faster, better, and longer lasting
           }}
           onBack={prev}
         >
- <RadioGroup
+          <RadioGroup
             value={preferredDiet}
             options={preferDiets}
             onChange={setPreferredDiet}
@@ -552,9 +595,8 @@ Diet AI helps you achieve results faster, better, and longer lasting
             dotColor={Colors.light.primaryButton}
             itemHeight={66}
           />
-          </QuestionStep>
-          }
-
+        </QuestionStep>
+      )}
     </SafeAreaWrapper>
   );
 }
@@ -562,11 +604,12 @@ Diet AI helps you achieve results faster, better, and longer lasting
 const styles = StyleSheet.create({
   weightLossDescription: {
     fontFamily: fonts.secondary.secondaryRegular,
-    textAlign: 'center',
+    textAlign: "center",
     paddingHorizontal: 20,
-    fontSize: responsiveFontSize(18)
+    fontSize: responsiveFontSize(18),
+    color: "#696767",
   },
-  wrapperTitleStyle:{
+  wrapperTitleStyle: {
     fontSize: responsiveFontSize(40),
     lineHeight: responsiveLineHeight(40, 50),
     fontFamily: fonts.primary.primaryBold,
@@ -581,4 +624,4 @@ const styles = StyleSheet.create({
     color: "#7A7A7A",
     textAlign: "center",
   },
-})
+});

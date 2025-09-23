@@ -13,6 +13,12 @@ import Crown from './crown.png';
 import CupDietAi from './cupdietai.png';
 import DocRec from './docrecipe.png';
 import GreenCheckMark from './greencheckmark.png';
+import Img1 from './img1.jpg';
+import Img2 from './img2.jpg';
+import Img3 from './img3.png';
+import Img4 from './img4.jpg';
+import Img5 from './img5.png';
+
 import Lock from './lock.png';
 import OneWeek from './oneweek.png';
 import SettingImg from './settingpic.png';
@@ -21,5 +27,6 @@ import Spoon from './spoon.png';
 import User from './user.png';
 import WelcomeImg from "./welcome.png";
 
-export { Burger, Camera, Carrot, CarrotOutlined, Crown, CupDietAi, DocRec, GreenCheckMark, Lock, Onboarding1, Onboarding2, Onboarding3, Onboarding4, OneWeek, SettingImg, SixMonths, Speed, Spoon, ThreeMonths, User, WelcomeImg };
+
+export { Burger, Camera, Carrot, CarrotOutlined, Crown, CupDietAi, DocRec, GreenCheckMark, Img1, Img2, Img3, Img4, Img5, Lock, Onboarding1, Onboarding2, Onboarding3, Onboarding4, OneWeek, SettingImg, SixMonths, Speed, Spoon, ThreeMonths, User, WelcomeImg };
 

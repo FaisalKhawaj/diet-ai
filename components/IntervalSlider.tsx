@@ -20,19 +20,24 @@ import { Spacer } from "./Spacer";
 type IntervalId = "1w" | "3m" | "6m";
 
 type Props = {
-  value?: IntervalId;                       // controlled
-  defaultValue?: IntervalId;                // uncontrolled
+  value?: IntervalId; // controlled
+  defaultValue?: IntervalId; // uncontrolled
   onChange?: (v: IntervalId) => void;
 
   style?: ViewStyle;
-  trackHeight?: number;                     // default 8
-  thumbSize?: number;                       // default 22
-  activeColor?: string;                     // lime
-  trackColor?: string;                      // grey
-  iconOpacityInactive?: number;             // 0..1
+  trackHeight?: number; // default 8
+  thumbSize?: number; // default 22
+  activeColor?: string; // lime
+  trackColor?: string; // grey
+  iconOpacityInactive?: number; // 0..1
 };
 
-const STOPS: { id: IntervalId; label: string; emoji: string, image: ImageSourcePropType }[] = [
+const STOPS: {
+  id: IntervalId;
+  label: string;
+  emoji: string;
+  image: ImageSourcePropType;
+}[] = [
   { id: "1w", label: "1 week", emoji: "🐆", image: OneWeek }, // fast
   { id: "3m", label: "3 months", emoji: "🐇", image: ThreeMonths }, // medium
   { id: "6m", label: "6 months", emoji: "🐢", image: SixMonths }, // slow
@@ -51,9 +56,10 @@ export function IntervalSlider({
 }: Props) {
   // — layout —
   const [trackW, setTrackW] = useState(0);
-  const onTrackLayout = (e: LayoutChangeEvent) => setTrackW(e.nativeEvent.layout.width);
+  const onTrackLayout = (e: LayoutChangeEvent) =>
+    setTrackW(e.nativeEvent.layout.width);
 
-  const indexFromId = (id: IntervalId) => STOPS.findIndex(s => s.id === id);
+  const indexFromId = (id: IntervalId) => STOPS.findIndex((s) => s.id === id);
   const idFromIndex = (i: number) => STOPS[Math.max(0, Math.min(2, i))].id;
 
   const isControlled = value != null;
@@ -67,9 +73,7 @@ export function IntervalSlider({
   const stopXs = useMemo(() => {
     // 3 evenly spaced stops in the track (0, mid, end)
     const gaps = 2;
-    return trackW === 0
-      ? [0, 0, 0]
-      : [0, trackW / gaps, trackW]; // absolute px from left edge
+    return trackW === 0 ? [0, 0, 0] : [0, trackW / gaps, trackW]; // absolute px from left edge
   }, [trackW]);
 
   // move knob to a stop
@@ -109,7 +113,10 @@ export function IntervalSlider({
       onStartShouldSetPanResponder: () => true,
       onMoveShouldSetPanResponder: () => true,
       onPanResponderMove: (_, g: PanResponderGestureState) => {
-        const x = Math.max(0, Math.min(trackW, g.moveX - g.x0 + stopXs[currentIndex]));
+        const x = Math.max(
+          0,
+          Math.min(trackW, g.moveX - g.x0 + stopXs[currentIndex])
+        );
         xAnim.setValue(x);
       },
       onPanResponderRelease: (_, g) => {
@@ -140,19 +147,27 @@ export function IntervalSlider({
           return (
             <>
               <Image
-                contentFit='contain'
+                contentFit="contain"
                 style={{ width: 60, height: 30 }}
-                key={s.id} source={s.image} />
+                key={`key-${s.id}`}
+                source={s.image}
+              />
             </>
           );
         })}
       </View>
 
       <Spacer marginTop={20} />
-      
+
       {/* track + thumb */}
-      <Pressable onPress={handlePressTrack} style={[styles.trackWrap]} >
-        <View onLayout={onTrackLayout} style={[styles.track, { height: trackHeight, backgroundColor: trackColor }]} />
+      <Pressable onPress={handlePressTrack} style={[styles.trackWrap]}>
+        <View
+          onLayout={onTrackLayout}
+          style={[
+            styles.track,
+            { height: trackHeight, backgroundColor: trackColor },
+          ]}
+        />
         <Animated.View
           style={[
             styles.thumb,
@@ -166,14 +181,25 @@ export function IntervalSlider({
           ]}
           {...pan.panHandlers}
         >
-          <View style={[styles.thumbInner, { width: thumbSize - 8, height: thumbSize - 8, borderRadius: (thumbSize - 8) / 2 }]} />
+          <View
+            style={[
+              styles.thumbInner,
+              {
+                width: thumbSize - 8,
+                height: thumbSize - 8,
+                borderRadius: (thumbSize - 8) / 2,
+              },
+            ]}
+          />
         </Animated.View>
       </Pressable>
 
       {/* labels */}
       <View style={[styles.rowBetween, { marginTop: 8 }]}>
         {STOPS.map((s) => (
-          <Text key={s.id} style={styles.label}>{s.label}</Text>
+          <Text key={s.id} style={styles.label}>
+            {s.label}
+          </Text>
         ))}
       </View>
     </View>
@@ -182,7 +208,11 @@ export function IntervalSlider({
 
 const styles = StyleSheet.create({
   wrap: { width: "100%" },
-  rowBetween: { flexDirection: "row", justifyContent: "space-between", alignItems: "center" },
+  rowBetween: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+  },
 
   emoji: { fontSize: 28, color: "#BFBFBF" },
 
@@ -192,7 +222,7 @@ const styles = StyleSheet.create({
   thumb: {
     position: "absolute",
     top: "50%",
-    marginTop: -11,             // centers ~22px thumb on the track
+    marginTop: -11, // centers ~22px thumb on the track
     alignItems: "center",
     justifyContent: "center",
     shadowColor: "#000",
@@ -204,7 +234,8 @@ const styles = StyleSheet.create({
   thumbInner: { backgroundColor: "#FFFFFF" },
 
   label: {
-    color: "#A6A6A6", fontSize: responsiveFontSize(18),
+    color: "#A6A6A6",
+    fontSize: responsiveFontSize(18),
     fontFamily: fonts.secondary.secondaryRegular,
   },
 });

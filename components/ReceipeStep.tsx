@@ -40,7 +40,7 @@ type QuestionStepProps = {
   titleStyle?: TextStyle;
   descriptionStyle?: TextStyle;
   continueText?: string;
-  renderTitle?:any,
+  renderTitle?: any;
 };
 
 export const ReceipeStep: React.FC<QuestionStepProps> = ({
@@ -65,7 +65,9 @@ export const ReceipeStep: React.FC<QuestionStepProps> = ({
         <Pressable style={globalStyles.overflowBackButton} onPress={onBack}>
           <Ionicons name="chevron-back" size={20} color="#000" />
         </Pressable>
-        <ThemedText style={globalStyles.screenCenterHeaderTitle}>Receipe AI</ThemedText>
+        <ThemedText style={globalStyles.screenCenterHeaderTitle}>
+          Receipe AI
+        </ThemedText>
       </View>
 
       <Spacer marginTop={30} />
@@ -79,7 +81,11 @@ export const ReceipeStep: React.FC<QuestionStepProps> = ({
       <Spacer marginTop={10} />
       {title && <Text style={[styles.title, titleStyle]}>{title}</Text>}
       <Spacer marginTop={10} />
-      {description && <Text style={[styles.description, descriptionStyle]}>{description}</Text>}
+      {description && (
+        <Text style={[styles.description, descriptionStyle]}>
+          {description}
+        </Text>
+      )}
 
       {/* Flexible content area */}
       <View style={styles.contentWrapper}>
@@ -96,7 +102,6 @@ export const ReceipeStep: React.FC<QuestionStepProps> = ({
   );
 };
 
-
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -108,7 +113,8 @@ const styles = StyleSheet.create({
     marginBottom: 16,
   },
   row: {
-    flexDirection: 'row', alignItems: 'center'
+    flexDirection: "row",
+    alignItems: "center",
   },
   contentWrapper: {
     flex: 1,
@@ -118,8 +124,8 @@ const styles = StyleSheet.create({
     flex: 1,
     fontFamily: fonts.primary.primaryBold,
     fontSize: responsiveFontSize(25),
-    lineHeight: responsiveLineHeight(25, 30)
-    , textAlign: 'center'
+    lineHeight: responsiveLineHeight(25, 30),
+    textAlign: "center",
   },
   progressWrap: {
     flex: 1,
@@ -151,7 +157,7 @@ const styles = StyleSheet.create({
     // justifyContent: "center",
   },
   footer: {
-    paddingHorizontal: 20,
+    // paddingHorizontal: 20,
     paddingBottom: 20,
   },
 
@@ -162,7 +168,6 @@ const styles = StyleSheet.create({
     marginBottom: 20,
     alignItems: "center",
     width: "100%",
-
   },
   continueText: {
     fontWeight: "600",
